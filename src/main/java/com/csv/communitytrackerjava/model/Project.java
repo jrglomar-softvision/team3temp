@@ -1,21 +1,17 @@
 package com.csv.communitytrackerjava.model;
+import lombok.*;
 
-
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-
 import javax.validation.constraints.Size;
 
-@Entity
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-public class Project extends BaseAuditClass {
+@AllArgsConstructor
+@Entity
+public class Project extends BaseAuditClass{
 
     @Id
     @Column
@@ -32,4 +28,35 @@ public class Project extends BaseAuditClass {
     @Column
     private Boolean isActive;
 
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
+
+    public String getProjectCode() {
+        return projectCode;
+    }
+
+    public void setProjectCode(String projectCode) {
+        this.projectCode = projectCode;
+    }
+
+    public String getProjectDesc() {
+        return projectDesc;
+    }
+
+    public void setProjectDesc(String projectDesc) {
+        this.projectDesc = projectDesc;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
 }

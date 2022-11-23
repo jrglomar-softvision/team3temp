@@ -4,7 +4,7 @@ import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.model.Project;
 
 public interface ProjectService {
-    
+
     Iterable<Project> findAllProject();
     
     Project findProjectById(Integer id) throws RecordNotFoundException;
