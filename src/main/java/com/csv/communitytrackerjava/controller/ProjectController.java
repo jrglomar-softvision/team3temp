@@ -1,5 +1,6 @@
 package com.csv.communitytrackerjava.controller;
 
+import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.mapper.ProjectMapper;
 import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.response.ProjectResponse;
@@ -32,10 +33,12 @@ public class ProjectController {
         projectResponse.setAdditionalProperty("projects", projectService.findAllProject());
         return new ResponseEntity<>(projectResponse, HttpStatus.OK);
     }
-    
-    @GetMapping("/asd")
-    public ResponseEntity<Iterable<Project>> findAllProject(){
-        return new ResponseEntity<>(projectService.findAllProject(), HttpStatus.OK);
+
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Project> update(@RequestBody Project project, @PathVariable Integer id) throws RecordNotFoundException {
+        return new ResponseEntity<>(projectService.updateProject(project, id), HttpStatus.ACCEPTED);
+
     }
 
 }
