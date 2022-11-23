@@ -7,6 +7,7 @@ import org.apache.commons.text.CaseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import java.util.Optional;
 
 @Service
@@ -21,16 +22,19 @@ public class ProjectServiceImpl implements ProjectService{
 
     @Override
     public Project updateProject(Project project, int id) throws RecordNotFoundException {
+
         Project projectFound = projectRepository.findById(id).orElseThrow();
-            String newDesc = CaseUtils.toCamelCase(project.getProjectDesc(), true, ' ');
-            projectFound.setProjectDesc(newDesc);
-        return projectFound;
+        String newDesc = CaseUtils.toCamelCase(project.getProjectDesc(), true, ' ');
+        projectFound.setProjectDesc(newDesc);
+        Optional<Project> mapCode = Optional.ofNullable(projectRepository.findByProjectCode(project.getProjectCode()));
+        if(mapCode.isEmpty()) {
+            projectFound.setProjectCode(project.getProjectCode());
+            return projectFound;
+        }
+        else{
+                return null;
+
+            }
     }
-//    String newDesc = CaseUtils.toCamelCase(project.getProjectDesc(), true, ' ');
-//        char newDesc = Character.toUpperCase(project.getProjectDesc().charAt(0));
-//        char toPascal = Character.toUpperCase(newDesc.charAt(0));
-//        return projectRepository.findById(id).map(newProj ->{
-//            newProj.setProjectDesc(newDesc);
-//            return projectRepository.save(newProj);
-//        });
+
 }
