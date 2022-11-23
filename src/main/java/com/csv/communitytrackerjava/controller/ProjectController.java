@@ -17,5 +17,9 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
     
+    @GetMapping
+    public ResponseEntity<Iterable<Project>> findAll(){
+        return new ResponseEntity<>(projectService.findAllProject(), HttpStatus.OK);
+    }
 
 }
