@@ -19,9 +19,9 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<Project> update(@RequestBody Project project, @PathVariable Integer id) throws RecordNotFoundException {
-        return new ResponseEntity<>(projectService.updateProject(project, id), HttpStatus.OK);
+        return new ResponseEntity<>(projectService.updateProject(project, id), HttpStatus.ACCEPTED);
 
 
     }
