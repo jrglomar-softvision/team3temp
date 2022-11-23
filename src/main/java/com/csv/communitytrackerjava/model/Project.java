@@ -30,6 +30,6 @@ public class Project extends BaseAuditClass {
     private String projectDesc;
 
     @Column
-    private Boolean isActive = true;
+    private Boolean isActive;
 
 }
