@@ -1,6 +1,5 @@
 package com.academy.communitytrackerjava.service;
 
-import com.academy.communitytrackerjava.exception.IsActiveNotZeroOrOneException;
 import com.academy.communitytrackerjava.model.Project;
 import com.academy.communitytrackerjava.model.ProjectDTO;
 import com.academy.communitytrackerjava.repository.ProjectRepository;
@@ -19,11 +18,7 @@ public class ProjectService {
     private ModelMapper modelMapper;
 
 
-    public ProjectDTO saveProject(ProjectDTO projectDTO) throws IsActiveNotZeroOrOneException {
-        Integer isActive = projectDTO.getIsActive();
-        if (isActive != 0 && isActive != 1)
-            throw new IsActiveNotZeroOrOneException();
-
+    public ProjectDTO saveProject(ProjectDTO projectDTO) {
         String projectDesc = projectDTO.getProjectDesc();
         projectDTO.setProjectDesc(CaseUtils.toCamelCase(projectDesc, true, ' '));
 
