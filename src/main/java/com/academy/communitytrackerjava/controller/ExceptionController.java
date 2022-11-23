@@ -40,7 +40,7 @@ public class ExceptionController {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("errors", errors);
         response.put("message", message);
-        response.put("payload", "");
+        response.put("payload", null);
         return response;
     }
 

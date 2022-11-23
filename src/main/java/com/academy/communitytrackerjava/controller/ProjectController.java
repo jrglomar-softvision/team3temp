@@ -1,6 +1,6 @@
 package com.academy.communitytrackerjava.controller;
 
-import com.academy.communitytrackerjava.model.ProjectDTO;
+import com.academy.communitytrackerjava.dto.ProjectDTO;
 import com.academy.communitytrackerjava.service.ProjectService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;

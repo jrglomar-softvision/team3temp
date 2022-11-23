@@ -1,7 +1,7 @@
 package com.academy.communitytrackerjava.service;
 
 import com.academy.communitytrackerjava.model.Project;
-import com.academy.communitytrackerjava.model.ProjectDTO;
+import com.academy.communitytrackerjava.dto.ProjectDTO;
 import com.academy.communitytrackerjava.repository.ProjectRepository;
 import org.apache.commons.text.CaseUtils;
 import org.modelmapper.ModelMapper;
