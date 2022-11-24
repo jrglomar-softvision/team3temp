@@ -31,12 +31,12 @@ public class ExceptionController {
     
     @ExceptionHandler(value = NoSuchElementException.class)
     public ResponseEntity<ProjectResponseDTO> handleNoSuchElementException(NoSuchElementException e){
-        return new ResponseEntity<>(exceptionService.formatErrorResponse(e, "Record Not Found"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(exceptionService.formatErrorResponse(e), HttpStatus.BAD_REQUEST);
     }
     
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     public ResponseEntity<ProjectResponseDTO> handleHttpMessageNotReadableException(HttpMessageNotReadableException e){
-        return new ResponseEntity<>(exceptionService.formatErrorResponse(e, "Unexpected Characters"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(exceptionService.formatErrorResponse(e), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)

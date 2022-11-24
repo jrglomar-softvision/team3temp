@@ -4,17 +4,15 @@ import lombok.*;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@Table(name = "project")
+@EntityListeners(AuditingEntityListener.class)
+@Table(name="projects")
 public class Project extends BaseAuditClass{
 
     @Id

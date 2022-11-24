@@ -57,12 +57,15 @@ public class ProjectServiceImpl implements ProjectService {
         Optional<Project> mapCode = Optional.ofNullable(projectRepository.findByProjectCode(project.getProjectCode()));
         if (mapCode.isEmpty()) {
             projectFound.setProjectCode(project.getProjectCode() == null ? projectFound.getProjectCode() : project.getProjectCode());
-        } else {
+            projectRepository.save(projectFound);
+        } 
+        else {
             throw new NoSuchElementException("Code already existing");
         }
         projectResponseDTO.setMessage("Successfully update project.");
         payloadDTO.setAdditionalProperty("projects", projectMapper.toDTO(projectFound));
         projectResponseDTO.setPayload(payloadDTO);
+        
 
         return projectResponseDTO;
     }
