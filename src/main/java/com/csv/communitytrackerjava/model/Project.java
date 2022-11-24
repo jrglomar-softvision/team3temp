@@ -3,12 +3,9 @@ import lombok.*;
 
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -16,21 +13,23 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "project")
 public class Project extends BaseAuditClass{
 
     @Id
-    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "projectid")
     private Integer projectId;
 
     @Size(max = 100)
-    @Column(length = 100, unique = true)
-    private String projectCode;
-
-    @Size(max = 100)
-    @Column(length = 100)
+    @Column(name = "projectdesc", length = 100, nullable = false)
     private String projectDesc;
 
-    @Column
+    @Size(max = 100)
+    @Column(name = "projectcode", length = 100, unique = true, nullable = false)
+    private String projectCode;
+
+    @Column(name = "isactive", nullable = false)
     private Boolean isActive;
 
     public Integer getProjectId() {
@@ -57,11 +56,11 @@ public class Project extends BaseAuditClass{
         this.projectDesc = projectDesc;
     }
 
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return isActive;
     }
 
-    public void setActive(Boolean active) {
-        isActive = active;
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 }
