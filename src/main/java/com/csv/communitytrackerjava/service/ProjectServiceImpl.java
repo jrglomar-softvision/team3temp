@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.ObjectError;
 
 import javax.persistence.EntityExistsException;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -28,7 +29,6 @@ public class ProjectServiceImpl implements ProjectService{
     
     ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
     
-
     @Override
     public Project saveProject(Project project) {
         return projectRepository.save(project);
@@ -47,20 +47,16 @@ public class ProjectServiceImpl implements ProjectService{
         else{
             throw new EntityExistsException("Code already existing");
         }
-
-        projectResponseDTO.setErrors(Arrays.asList(new ObjectError("test", "test")));
-        projectResponseDTO.setMessage("Successfully fetch all projects.");
+        projectResponseDTO.setMessage("Successfully update project.");
         payloadDTO.setAdditionalProperty("projects", projectMapper.toDTO(projectFound));
         projectResponseDTO.setPayload(payloadDTO);
 
         return projectResponseDTO;
-
     }
 
     @Override
     public ProjectResponseDTO findAllProject() {
 
-        projectResponseDTO.setErrors(Arrays.asList(new ObjectError("test", "test")));
         projectResponseDTO.setMessage("Successfully fetch all projects.");
         payloadDTO.setAdditionalProperty("projects", projectMapper.toListDTO(projectRepository.findAll()));
         projectResponseDTO.setPayload(payloadDTO);

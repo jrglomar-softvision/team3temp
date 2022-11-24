@@ -1,6 +1,8 @@
 package com.csv.communitytrackerjava.TestController;
 
 
+import com.csv.communitytrackerjava.dto.ProjectPayloadDTO;
+import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
 import com.csv.communitytrackerjava.service.ProjectService;
 import com.csv.communitytrackerjava.model.Project;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +16,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.Assert;
 
+import javax.validation.Payload;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -22,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 public class TestProjectController {
-    Project jojo, raven, r, lyoyd, baqui;
+    Project jojoProj, raven, r, lyoyd, baqui;
 
     @MockBean
     private ProjectService projectService;
@@ -34,7 +40,7 @@ public class TestProjectController {
 
     @BeforeEach
     void setup() {
-        jojo = new Project(1, "projectCode", "projectDesc", true);
+        jojoProj = new Project(1, "projectCode", "projectDesc", true);
         raven = new Project(2, "projectCode2", "projectDesc2", true);
         r = new Project(3, "projectCode3", "projectDesc3", true);
         lyoyd = new Project(4, "projectCode4", "projectDesc4", true);
@@ -46,16 +52,26 @@ public class TestProjectController {
     @Test
     void updateProject() throws Exception {
         //Arrange
-        jojo.setProjectDesc("Change Project Desc");
-        jojo.setProjectCode("Change Project Code");
-        when(projectService.updateProject(any(Project.class), anyInt())).thenReturn(jojo);
+        jojoProj.setProjectDesc("Change Project Desc");
+        jojoProj.setProjectCode("Change Project Code");
+        
 
+        ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
+        ProjectPayloadDTO projectPayloadDTO = new ProjectPayloadDTO();
+        projectResponseDTO.setErrors(null);
+        projectResponseDTO.setMessage("Successfully fetch all projects.");
+        projectPayloadDTO.setAdditionalProperty("projects", jojoProj);
+        projectResponseDTO.setPayload(projectPayloadDTO);
+
+        when(projectService.updateProject(any(Project.class), anyInt())).thenReturn(projectResponseDTO);
+
+        
         //ACT
         mockMvc.perform(patch("/projects/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(jojo)))
-                .andExpect(jsonPath("$.projectDesc", CoreMatchers.is(jojo.getProjectDesc())))
-                .andExpect(jsonPath("$.projectCode", CoreMatchers.is(jojo.getProjectCode())))
+                        .content(objectMapper.writeValueAsString(jojoProj)))
+                .andExpect(jsonPath("$.projectDesc", CoreMatchers.is(jojoProj.getProjectDesc())))
+                .andExpect(jsonPath("$.projectCode", CoreMatchers.is(jojoProj.getProjectCode())))
                 .andExpect(status().isAccepted());
 
 
@@ -75,6 +91,15 @@ public class TestProjectController {
                 "Etiam vitae varius velit. Nunc sed erat aliquet, facilisis arcu a, auctor erat. Suspendisse laoreet diam et tincidunt pellentesque. Sed lorem lorem, tempus ut diam id, tempus porttitor leo. Vestibulum vel egestas nisl. Vivamus viverra ultrices risus id semper. Sed ac urna ac turpis aliquam congue. Sed sagittis posuere scelerisque. Mauris faucibus a tortor ut finibus. Duis viverra lectus sed felis pulvinar lobortis. Aliquam erat volutpat. Vestibulum ornare eget urna pharetra efficitur. Donec nec hendrerit ante, ac scelerisque nulla. Praesent quis consectetur neque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;" +
                 "Sed at auctor dolor. Suspendisse cursus, neque nec sollicitudin tempus, tellus risus lobortis velit, sit amet finibus elit ipsum nec est. Fusce consequat quis quam sed tincidunt. Nulla facilisi. Praesent porttitor, enim id mollis eleifend, eros sapien pretium tortor, id sollicitudin enim nulla ut neque. Cras vitae bibendum eros, vel auctor massa. Cras maximus vestibulum mi, eu viverra risus vulputate id. Sed tempor enim ac elementum ornare. Donec porttitor, felis vitae fermentum maximus, nibh est vulputate mi, vitae volutpat dui erat eu nisl. Suspendisse sit amet risus nibh. In hac habitasse platea dictumst. Duis faucibus facilisis bibendum. Aliquam ornare odio ac ligula cursus, nec feugiat velit laoreet. Aenean sit amet leo nunc. Aliquam at hendrerit CODE.\n"
         );
+
+        ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
+        ProjectPayloadDTO projectPayloadDTO = new ProjectPayloadDTO();
+        projectResponseDTO.setErrors(null);
+        projectResponseDTO.setMessage("Successfully fetch all projects.");
+        projectPayloadDTO.setAdditionalProperty("projects", Arrays.asList());
+        projectResponseDTO.setPayload(projectPayloadDTO);
+
+        when(projectService.updateProject(any(Project.class), anyInt())).thenReturn(projectResponseDTO);
         when(projectService.updateProject(any(Project.class), anyInt())).thenReturn(raven);
 
         //ACT

@@ -1,5 +1,6 @@
 package com.csv.communitytrackerjava.dto;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "errors",
         "message",
@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class ProjectResponseDTO {
 
     @JsonProperty("errors")
-    private List<Object> errors = null;
+    private List<Object> errors = Collections.emptyList();
     @JsonProperty("message")
     private String message;
     @JsonProperty("payload")

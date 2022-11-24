@@ -19,18 +19,18 @@ import javax.validation.constraints.Size;
 public class Project extends BaseAuditClass{
 
     @Id
-    @Column
+    @Column(updatable = false, nullable = false)
     private Integer projectId;
 
     @Size(max = 100)
-    @Column(length = 100, unique = true)
+    @Column(length = 100, unique = true, nullable = false)
     private String projectCode;
 
     @Size(max = 100)
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String projectDesc;
 
-    @Column
+    @Column(nullable = false)
     private Boolean isActive;
 
     public Integer getProjectId() {
