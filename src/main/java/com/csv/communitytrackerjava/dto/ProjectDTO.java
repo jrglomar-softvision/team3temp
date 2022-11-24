@@ -1,36 +1,20 @@
-package com.csv.communitytrackerjava.model;
-import lombok.*;
+package com.csv.communitytrackerjava.dto;
 
-
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-@Table(name = "project")
-public class Project extends BaseAuditClass{
+public class ProjectDTO {
 
-    @Id
-    @Column(updatable = false, nullable = false)
+    @NotNull
     private Integer projectId;
 
     @Size(max = 100)
-    @Column(length = 100, unique = true, nullable = false)
+    @NotNull
     private String projectCode;
 
     @Size(max = 100)
-    @Column(length = 100, nullable = false)
+    @NotNull
     private String projectDesc;
-
-    @Column(nullable = false)
-    private Boolean isActive;
 
     public Integer getProjectId() {
         return projectId;
@@ -54,13 +38,5 @@ public class Project extends BaseAuditClass{
 
     public void setProjectDesc(String projectDesc) {
         this.projectDesc = projectDesc;
-    }
-
-    public Boolean getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
     }
 }
