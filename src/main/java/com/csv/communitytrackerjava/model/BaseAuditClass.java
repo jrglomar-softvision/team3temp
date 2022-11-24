@@ -17,12 +17,12 @@ public abstract class BaseAuditClass {
 
     @CreationTimestamp
     @CreatedDate
-    @Column(name="created_at")
+    @Column(name = "created_at")
     private Date createdAt;
 
     @UpdateTimestamp
     @LastModifiedDate
-    @Column(name="updated_at")
+    @Column(name = "updated_at")
     private Date updatedAt;
 
     public Date getCreatedAt() {

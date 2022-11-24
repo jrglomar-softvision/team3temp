@@ -5,18 +5,10 @@ import javax.validation.constraints.Size;
 public class ProjectUpdateDTO {
 
     @Size(max = 100)
-    private String projectCode;
-
-    @Size(max = 100)
     private String projectDesc;
 
-    public String getProjectCode() {
-        return projectCode;
-    }
-
-    public void setProjectCode(String projectCode) {
-        this.projectCode = projectCode;
-    }
+    @Size(max = 100)
+    private String projectCode;
 
     public String getProjectDesc() {
         return projectDesc;
@@ -24,5 +16,13 @@ public class ProjectUpdateDTO {
 
     public void setProjectDesc(String projectDesc) {
         this.projectDesc = projectDesc;
+    }
+
+    public String getProjectCode() {
+        return projectCode;
+    }
+
+    public void setProjectCode(String projectCode) {
+        this.projectCode = projectCode;
     }
 }

@@ -10,11 +10,11 @@ public class ProjectDTO {
 
     @Size(max = 100)
     @NotNull
-    private String projectCode;
+    private String projectDesc;
 
     @Size(max = 100)
     @NotNull
-    private String projectDesc;
+    private String projectCode;
 
     public Integer getProjectId() {
         return projectId;
@@ -24,19 +24,19 @@ public class ProjectDTO {
         this.projectId = projectId;
     }
 
-    public String getProjectCode() {
-        return projectCode;
-    }
-
-    public void setProjectCode(String projectCode) {
-        this.projectCode = projectCode;
-    }
-
     public String getProjectDesc() {
         return projectDesc;
     }
 
     public void setProjectDesc(String projectDesc) {
         this.projectDesc = projectDesc;
+    }
+
+    public String getProjectCode() {
+        return projectCode;
+    }
+
+    public void setProjectCode(String projectCode) {
+        this.projectCode = projectCode;
     }
 }

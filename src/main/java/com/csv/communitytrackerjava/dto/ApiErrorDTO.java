@@ -10,7 +10,7 @@ public class ApiErrorDTO {
     private HttpStatus status;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private LocalDateTime timestamp;
-    
+
     private String type;
 
     public ApiErrorDTO() {
