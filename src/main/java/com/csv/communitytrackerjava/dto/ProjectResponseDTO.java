@@ -1,4 +1,4 @@
-package com.csv.communitytrackerjava.response;
+package com.csv.communitytrackerjava.dto;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,14 +18,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
         "payload"
 })
 @Generated("jsonschema2pojo")
-public class ProjectResponse {
+public class ProjectResponseDTO {
 
     @JsonProperty("errors")
     private List<Object> errors = null;
     @JsonProperty("message")
     private String message;
     @JsonProperty("payload")
-    private Payload payload;
+    private PayloadDTO payload;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -50,12 +50,12 @@ public class ProjectResponse {
     }
 
     @JsonProperty("payload")
-    public Payload getPayload() {
+    public PayloadDTO getPayload() {
         return payload;
     }
 
     @JsonProperty("payload")
-    public void setPayload(Payload payload) {
+    public void setPayload(PayloadDTO payload) {
         this.payload = payload;
     }
 

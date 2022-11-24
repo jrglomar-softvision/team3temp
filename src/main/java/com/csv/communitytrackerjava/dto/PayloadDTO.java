@@ -1,4 +1,4 @@
-package com.csv.communitytrackerjava.response;
+package com.csv.communitytrackerjava.dto;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
         "projects"
 })
 @Generated("jsonschema2pojo")
-public class Payload {
+public class PayloadDTO {
 
     @JsonProperty("projects")
     private List<Project> projects = null;
