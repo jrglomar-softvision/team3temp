@@ -30,11 +30,13 @@ public class ProjectServiceImpl implements ProjectService{
         Optional<Project> mapCode = Optional.ofNullable(projectRepository.findByProjectCode(project.getProjectCode()));
         if(mapCode.isEmpty()) {
             projectFound.setProjectCode(project.getProjectCode());
-            return projectFound;
         }
         else{
-                return null;
+                throw new EntityExistsException("Code already existing");
             }
+
+        return projectFound;
+
     }
 
     @Override
