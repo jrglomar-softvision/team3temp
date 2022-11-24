@@ -1,7 +1,7 @@
 package com.csv.communitytrackerjava.TestController;
 
 
-import com.csv.communitytrackerjava.Services.ProjectService;
+import com.csv.communitytrackerjava.service.ProjectService;
 import com.csv.communitytrackerjava.model.Project;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.CoreMatchers;

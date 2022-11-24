@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
         "projects"
 })
 @Generated("jsonschema2pojo")
-public class PayloadDTO {
+public class ProjectPayloadDTO {
 
     @JsonProperty("projects")
     private List<Project> projects = null;

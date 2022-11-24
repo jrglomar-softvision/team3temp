@@ -13,7 +13,7 @@ public interface ProjectMapper {
 
     Project toModel(ProjectDTO dto);
     
-    List<ProjectDTO> toListDTO(List<Project> listModel);
+    Iterable<ProjectDTO> toListDTO(Iterable<Project> listModel);
 
-    List<Project> toListModel(List<ProjectDTO> listDto);
+    Iterable<Project> toListModel(Iterable<ProjectDTO> listDto);
 }

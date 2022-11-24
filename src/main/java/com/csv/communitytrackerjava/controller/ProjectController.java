@@ -1,6 +1,6 @@
 package com.csv.communitytrackerjava.controller;
 
-import com.csv.communitytrackerjava.dto.PayloadDTO;
+import com.csv.communitytrackerjava.dto.ProjectPayloadDTO;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.mapper.ProjectMapper;
 import com.csv.communitytrackerjava.model.Project;
@@ -22,7 +22,7 @@ public class ProjectController {
     ProjectMapper projectMapper;
     
     ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
-    PayloadDTO payloadDTO = new PayloadDTO();
+    ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
 
     @GetMapping
     public ResponseEntity<ProjectResponseDTO> findAll(){

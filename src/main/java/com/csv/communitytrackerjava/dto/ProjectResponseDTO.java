@@ -25,7 +25,7 @@ public class ProjectResponseDTO {
     @JsonProperty("message")
     private String message;
     @JsonProperty("payload")
-    private PayloadDTO payload;
+    private ProjectPayloadDTO payload;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -50,12 +50,12 @@ public class ProjectResponseDTO {
     }
 
     @JsonProperty("payload")
-    public PayloadDTO getPayload() {
+    public ProjectPayloadDTO getPayload() {
         return payload;
     }
 
     @JsonProperty("payload")
-    public void setPayload(PayloadDTO payload) {
+    public void setPayload(ProjectPayloadDTO payload) {
         this.payload = payload;
     }
 

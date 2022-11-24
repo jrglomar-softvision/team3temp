@@ -1,18 +1,24 @@
 package com.csv.communitytrackerjava.service;
 
+import com.csv.communitytrackerjava.dto.ProjectDTO;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
+import com.csv.communitytrackerjava.mapper.ProjectMapper;
 import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.repository.ProjectRepository;
 import org.apache.commons.text.CaseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import java.util.Optional;
 
 @Service
 public class ProjectServiceImpl implements ProjectService{
     @Autowired
     ProjectRepository projectRepository;
+    
+    @Autowired
+    ProjectMapper projectMapper;
 
     
 
@@ -40,8 +46,8 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
     @Override
-    public Iterable<Project> findAllProject() {
-        return projectRepository.findAll();
+    public Iterable<ProjectDTO> findAllProject() {
+        return projectMapper.toListDTO(projectRepository.findAll());
     }
 
 }
