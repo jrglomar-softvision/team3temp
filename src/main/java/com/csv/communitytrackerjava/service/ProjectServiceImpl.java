@@ -4,6 +4,7 @@ import com.csv.communitytrackerjava.dto.ProjectPayloadDTO;
 import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
 import com.csv.communitytrackerjava.dto.ProjectUpdateDTO;
 import com.csv.communitytrackerjava.dto.ProjectAddDTO;
+import com.csv.communitytrackerjava.exception.ProjectCodeExistException;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.mapper.ProjectMapper;
 import com.csv.communitytrackerjava.model.Project;
@@ -46,8 +47,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, int id) throws RecordNotFoundException {
-        Project projectFound = projectRepository.findById(id).orElseThrow();
+    public ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, int id) throws Exception{
+        Project projectFound = projectRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
         String projectDesc = projectUpdateDTO.getProjectDesc();
         String newDesc = projectDesc == null || projectDesc.isEmpty() ? projectFound.getProjectDesc() : CaseUtils.toCamelCase(projectUpdateDTO.getProjectDesc(), true, ' ');
         projectFound.setProjectDesc(newDesc);
@@ -56,10 +57,9 @@ public class ProjectServiceImpl implements ProjectService {
             String projectCode = projectUpdateDTO.getProjectCode();
             projectFound.setProjectCode(projectCode == null || projectCode.isEmpty() ? projectFound.getProjectCode() : projectUpdateDTO.getProjectCode());
         } else {
-            throw new NoSuchElementException("Code already existing");
+            throw new ProjectCodeExistException("Project code already exist.");
         }
         projectRepository.save(projectFound);
-
         projectResponseDTO.setMessage("Successfully update project.");
         payloadDTO.setAdditionalProperty("projects", projectMapper.toDTO(projectFound));
         projectResponseDTO.setPayload(payloadDTO);

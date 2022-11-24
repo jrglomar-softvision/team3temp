@@ -2,6 +2,8 @@ package com.csv.communitytrackerjava.mapper;
 
 import com.csv.communitytrackerjava.dto.ProjectDTO;
 import com.csv.communitytrackerjava.dto.ProjectAddDTO;
+import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
+import com.csv.communitytrackerjava.dto.ProjectUpdateDTO;
 import com.csv.communitytrackerjava.model.Project;
 import org.mapstruct.Mapper;
 
@@ -18,4 +20,5 @@ public interface ProjectMapper {
 
     Project validationToModel(ProjectAddDTO projectAddDTO);
 
+    ProjectResponseDTO toResponseDTO(ProjectUpdateDTO projectUpdateDTO);
 }

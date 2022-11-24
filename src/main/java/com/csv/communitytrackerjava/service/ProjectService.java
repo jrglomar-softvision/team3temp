@@ -7,6 +7,6 @@ import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 
 public interface ProjectService {
     ProjectResponseDTO saveProject(ProjectAddDTO projectAddDTO);
-    ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, int id) throws RecordNotFoundException;
+    ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, int id) throws Exception;
     ProjectResponseDTO findAllProject();
 }
