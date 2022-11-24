@@ -8,6 +8,7 @@ import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -33,6 +34,10 @@ public class ExceptionController {
         return new ResponseEntity<>(exceptionService.formatErrorResponse(e, "Record Not Found"), HttpStatus.BAD_REQUEST);
     }
     
+    @ExceptionHandler(value = HttpMessageNotReadableException.class)
+    public ResponseEntity<ProjectResponseDTO> handleHttpMessageNotReadableException(HttpMessageNotReadableException e){
+        return new ResponseEntity<>(exceptionService.formatErrorResponse(e, "Unexpected Characters"), HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {

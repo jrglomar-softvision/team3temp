@@ -30,7 +30,7 @@ public class ProjectController {
     }
     
     @PatchMapping("/{id}")
-    public ResponseEntity<ProjectResponseDTO> update(@RequestBody Project project, @PathVariable Integer id) throws RecordNotFoundException {
+    public ResponseEntity<ProjectResponseDTO> update(@Valid @RequestBody Project project, @PathVariable Integer id) throws RecordNotFoundException {
         return new ResponseEntity<>(projectService.updateProject(project, id), HttpStatus.ACCEPTED);
     }
 

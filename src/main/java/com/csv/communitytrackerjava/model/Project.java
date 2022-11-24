@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -21,10 +22,12 @@ public class Project extends BaseAuditClass{
     private Integer projectId;
 
     @Size(max = 100)
+    @NotNull
     @Column(length = 100, unique = true, nullable = false)
     private String projectCode;
 
     @Size(max = 100)
+    @NotNull
     @Column(length = 100, nullable = false)
     private String projectDesc;
 
