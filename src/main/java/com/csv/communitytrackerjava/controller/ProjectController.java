@@ -9,7 +9,10 @@ import com.csv.communitytrackerjava.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/projects")
@@ -18,26 +21,15 @@ public class ProjectController {
     @Autowired
     ProjectService projectService;
     
-    @Autowired
-    ProjectMapper projectMapper;
-    
-    ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
-    ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
 
     @GetMapping
     public ResponseEntity<ProjectResponseDTO> findAll(){
-        projectResponseDTO.setMessage("Successfully fetch all projects.");
-        payloadDTO.setAdditionalProperty("projects", projectService.findAllProject());
-        projectResponseDTO.setPayload(payloadDTO);
-        return new ResponseEntity<>(projectResponseDTO, HttpStatus.OK);
+        return new ResponseEntity<>(projectService.findAllProject(), HttpStatus.OK);
     }
     
     @PatchMapping("/{id}")
     public ResponseEntity<ProjectResponseDTO> update(@RequestBody Project project, @PathVariable Integer id) throws RecordNotFoundException {
-        projectResponseDTO.setMessage("Successfully update project.");
-        payloadDTO.setAdditionalProperty("projects", projectService.updateProject(project, id));
-        projectResponseDTO.setPayload(payloadDTO);
-        return new ResponseEntity<>(projectResponseDTO, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(projectService.updateProject(project, id), HttpStatus.ACCEPTED);
     }
 
 }

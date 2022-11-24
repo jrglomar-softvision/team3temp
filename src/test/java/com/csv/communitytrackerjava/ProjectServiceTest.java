@@ -1,5 +1,6 @@
 package com.csv.communitytrackerjava;
 
+import com.csv.communitytrackerjava.dto.ProjectDTO;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.repository.ProjectRepository;
@@ -43,7 +44,7 @@ public class ProjectServiceTest {
         newSample.setProjectCode("newProjectCode");
         newSample.setProjectDesc("new description");
 
-        Project update = projectService.updateProject(newSample, 1);
+        ProjectDTO update = projectService.updateProject(newSample, 1);
 
         assertEquals("NewDescription", update.getProjectDesc());
         assertEquals("newProjectCode", update.getProjectCode());

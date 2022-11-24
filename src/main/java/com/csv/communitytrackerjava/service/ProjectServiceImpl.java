@@ -1,6 +1,8 @@
 package com.csv.communitytrackerjava.service;
 
 import com.csv.communitytrackerjava.dto.ProjectDTO;
+import com.csv.communitytrackerjava.dto.ProjectPayloadDTO;
+import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.mapper.ProjectMapper;
 import com.csv.communitytrackerjava.model.Project;
@@ -8,8 +10,10 @@ import com.csv.communitytrackerjava.repository.ProjectRepository;
 import org.apache.commons.text.CaseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.ObjectError;
 
 import javax.persistence.EntityExistsException;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -20,6 +24,9 @@ public class ProjectServiceImpl implements ProjectService{
     @Autowired
     ProjectMapper projectMapper;
 
+    ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
+    
+    ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
     
 
     @Override
@@ -28,7 +35,7 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
     @Override
-    public Project updateProject(Project project, int id) throws RecordNotFoundException {
+    public ProjectResponseDTO updateProject(Project project, int id) throws RecordNotFoundException {
 
         Project projectFound = projectRepository.findById(id).orElseThrow();
         String newDesc = CaseUtils.toCamelCase(project.getProjectDesc(), true, ' ');
@@ -38,16 +45,27 @@ public class ProjectServiceImpl implements ProjectService{
             projectFound.setProjectCode(project.getProjectCode());
         }
         else{
-                throw new EntityExistsException("Code already existing");
-            }
+            throw new EntityExistsException("Code already existing");
+        }
 
-        return projectFound;
+        projectResponseDTO.setErrors(Arrays.asList(new ObjectError("test", "test")));
+        projectResponseDTO.setMessage("Successfully fetch all projects.");
+        payloadDTO.setAdditionalProperty("projects", projectMapper.toDTO(projectFound));
+        projectResponseDTO.setPayload(payloadDTO);
+
+        return projectResponseDTO;
 
     }
 
     @Override
-    public Iterable<ProjectDTO> findAllProject() {
-        return projectMapper.toListDTO(projectRepository.findAll());
+    public ProjectResponseDTO findAllProject() {
+
+        projectResponseDTO.setErrors(Arrays.asList(new ObjectError("test", "test")));
+        projectResponseDTO.setMessage("Successfully fetch all projects.");
+        payloadDTO.setAdditionalProperty("projects", projectMapper.toListDTO(projectRepository.findAll()));
+        projectResponseDTO.setPayload(payloadDTO);
+
+        return projectResponseDTO;
     }
 
 }
