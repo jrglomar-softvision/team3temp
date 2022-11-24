@@ -1,5 +1,6 @@
 package com.academy.communitytrackerjava.controller;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class ExceptionController {
             case "Max", "Min" -> "isActive should only be 0 or 1";
             default -> "MethodArgumentNotValidException caught";
         };
-        Map<String, Object> response = returnResponse(e.getFieldError(), message);
+        Map<String, Object> response = returnResponse(e.getFieldError().getDefaultMessage(), message);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
@@ -32,7 +33,14 @@ public class ExceptionController {
         String message = "PSQLException caught";
         if (e.getServerErrorMessage().getSQLState().equals("23505"))
             message = "projectCode should be unique";
-        Map<String, Object> response = returnResponse(e.getServerErrorMessage(), message);
+        Map<String, Object> response = returnResponse(e.getServerErrorMessage().getMessage(), message);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = InvalidFormatException.class)
+    public ResponseEntity<Object> handleInvalidFormat(InvalidFormatException e) {
+        String message = "Invalid data format on " + e.getPath().get(1);
+        Map<String, Object> response = returnResponse(e.getOriginalMessage(), message);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
