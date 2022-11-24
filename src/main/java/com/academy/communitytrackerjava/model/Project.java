@@ -1,6 +1,8 @@
 package com.academy.communitytrackerjava.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -9,6 +11,8 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "project")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Project {
 
     @Id
@@ -17,12 +21,10 @@ public class Project {
     private Integer projectId;
 
     @Column(name = "projectdesc", length = 100, nullable = false)
-    @Size(max = 100)
     @NotNull
     private String projectDesc;
 
     @Column(name = "projectcode", length = 100, unique = true, nullable = false)
-    @Size(max = 100)
     @NotNull
     private String projectCode;
 
