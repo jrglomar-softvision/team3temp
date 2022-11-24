@@ -5,8 +5,6 @@ import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.repository.ProjectRepository;
 import com.csv.communitytrackerjava.service.ProjectService;
 import com.csv.communitytrackerjava.service.ProjectServiceImpl;
-import com.googlecode.catchexception.ThrowingCallable;
-import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,16 +12,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-
 import javax.persistence.EntityExistsException;
 import java.util.Optional;
 
-import static com.googlecode.catchexception.apis.BDDCatchException.thenThrown;
-import static com.googlecode.catchexception.apis.BDDCatchException.when;
-import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.api.BDDAssertions.then;
-import static com.googlecode.catchexception.CatchException.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
 
 @ExtendWith(MockitoExtension.class)
 public class ProjectServiceTest {
@@ -37,7 +32,7 @@ public class ProjectServiceTest {
 
     @Test
     public void testUpdateDesc() throws RecordNotFoundException {
-        Mockito.when(projectRepository.findById(1))
+        Mockito.when(projectRepository.findById(anyInt()))
                 .thenReturn(Optional.ofNullable(Sample));
         Project newSample = new Project();
         newSample.setProjectCode("newProjectCode");
@@ -45,6 +40,7 @@ public class ProjectServiceTest {
 
         Project update = projectService.updateProject(newSample, 1);
 
+        assertEquals(1, update.getProjectId());
         assertEquals("NewDescription", update.getProjectDesc());
         assertEquals("newProjectCode", update.getProjectCode());
     }
@@ -58,19 +54,6 @@ public class ProjectServiceTest {
         Project newSample = new Project();
         newSample.setProjectCode("projectCode");
         newSample.setProjectDesc("new description");
-
-//            Optional<Project> update = Optional.ofNullable(projectService.updateProject(NewSample2, 1));
-//            Optional.ofNullable(projectService.updateProject(NewSample2, 1));
-//            catchException((ThrowingCallable) projectService.updateProject(newSample, 1));
-//            assert caughtException()instanceof EntityExistsException;
-
-//            when((ThrowingCallable) );
-//            then(Optional.ofNullable(caughtException()))
-//                    .isInstanceOf(EntityExistsException.class);
-//                assertThatExceptionOfType(EntityExistsException.class)
-//                        .isThrownBy((ThrowableAssert.ThrowingCallable) projectService.updateProject(NewSample2, 1))
-//                        .withMessage("Code already existing");
-//        assertTrue(false);
 
         Throwable throwable = catchThrowable(()->Optional.ofNullable(projectService.updateProject(newSample, 1)));
         assertThat(throwable).isInstanceOf(EntityExistsException.class)

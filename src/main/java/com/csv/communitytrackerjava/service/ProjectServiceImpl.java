@@ -4,6 +4,7 @@ import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.repository.ProjectRepository;
 import org.apache.commons.text.CaseUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ import javax.persistence.EntityExistsException;
 import java.util.Optional;
 
 @Service
-public class ProjectServiceImpl implements ProjectService{
+public class ProjectServiceImpl implements ProjectService {
     @Autowired
     ProjectRepository projectRepository;
 
@@ -22,17 +23,15 @@ public class ProjectServiceImpl implements ProjectService{
 
     @Override
     public Project updateProject(Project project, int id) throws RecordNotFoundException {
-
         Project projectFound = projectRepository.findById(id).orElseThrow();
-        String newDesc = CaseUtils.toCamelCase(project.getProjectDesc(), true, ' ');
+        String newDesc = project.getProjectDesc().isEmpty() ? projectFound.getProjectDesc() : CaseUtils.toCamelCase(project.getProjectDesc(), true, ' ');
         projectFound.setProjectDesc(newDesc);
         Optional<Project> mapCode = Optional.ofNullable(projectRepository.findByProjectCode(project.getProjectCode()));
-        if(mapCode.isEmpty()) {
-            projectFound.setProjectCode(project.getProjectCode());
+        if (mapCode.isEmpty()) {
+            projectFound.setProjectCode(project.getProjectCode() == null ? projectFound.getProjectCode() : project.getProjectCode());
+        } else {
+            throw new EntityExistsException("Code already existing");
         }
-        else{
-                throw new EntityExistsException("Code already existing");
-            }
 
         return projectFound;
 
