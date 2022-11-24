@@ -3,6 +3,7 @@ package com.csv.communitytrackerjava.TestController;
 
 import com.csv.communitytrackerjava.dto.ProjectPayloadDTO;
 import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
+import com.csv.communitytrackerjava.dto.ProjectUpdateDTO;
 import com.csv.communitytrackerjava.service.ProjectService;
 import com.csv.communitytrackerjava.model.Project;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,7 +64,7 @@ public class TestProjectController {
         projectPayloadDTO.setAdditionalProperty("projects", jojoProj);
         projectResponseDTO.setPayload(projectPayloadDTO);
 
-        when(projectService.updateProject(any(Project.class), anyInt())).thenReturn(projectResponseDTO);
+        when(projectService.updateProject(any(ProjectUpdateDTO.class), anyInt())).thenReturn(projectResponseDTO);
 
         
         //ACT
@@ -99,8 +100,8 @@ public class TestProjectController {
         projectPayloadDTO.setAdditionalProperty("projects", Arrays.asList());
         projectResponseDTO.setPayload(projectPayloadDTO);
 
-        when(projectService.updateProject(any(Project.class), anyInt())).thenReturn(projectResponseDTO);
-        when(projectService.updateProject(any(Project.class), anyInt())).thenReturn(raven);
+        when(projectService.updateProject(any(ProjectUpdateDTO.class), anyInt())).thenReturn(projectResponseDTO);
+//        when(projectService.updateProject(any(ProjectUpdateDTO.class), anyInt())).thenReturn(raven);
 
         //ACT
         mockMvc.perform(patch("/projects/{id}", 1)
