@@ -10,6 +10,8 @@ public class ApiErrorDTO {
     private HttpStatus status;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private LocalDateTime timestamp;
+    
+    private String type;
 
     public ApiErrorDTO() {
         timestamp = LocalDateTime.now();
@@ -23,11 +25,13 @@ public class ApiErrorDTO {
     ApiErrorDTO(HttpStatus status, Throwable ex) {
         this();
         this.status = status;
+        this.type = "Unexpected error";
     }
 
     ApiErrorDTO(HttpStatus status, String message, Throwable ex) {
         this();
         this.status = status;
+        this.type = message;
     }
 
     public HttpStatus getStatus() {
@@ -46,4 +50,12 @@ public class ApiErrorDTO {
         this.timestamp = timestamp;
     }
 
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

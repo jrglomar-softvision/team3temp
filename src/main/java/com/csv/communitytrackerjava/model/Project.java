@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -16,14 +14,13 @@ import javax.validation.constraints.Size;
 public class Project extends BaseAuditClass{
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
     private Integer projectId;
 
-    @Size(max = 100)
     @Column(length = 100, unique = true, nullable = false)
     private String projectCode;
 
-    @Size(max = 100)
     @Column(length = 100, nullable = false)
     private String projectDesc;
 

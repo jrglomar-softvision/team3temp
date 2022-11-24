@@ -2,6 +2,8 @@ package com.csv.communitytrackerjava.controller;
 
 import com.csv.communitytrackerjava.dto.ProjectPayloadDTO;
 import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
+import com.csv.communitytrackerjava.exception.ProjectCodeExistException;
+import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.service.ExceptionService;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.postgresql.util.PSQLException;
@@ -29,16 +31,16 @@ public class ExceptionController {
 
     ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
     
-    @ExceptionHandler(value = NoSuchElementException.class)
-    public ResponseEntity<ProjectResponseDTO> handleNoSuchElementException(NoSuchElementException e){
-        return new ResponseEntity<>(exceptionService.formatErrorResponse(e), HttpStatus.BAD_REQUEST);
-    }
-    
-    @ExceptionHandler(value = HttpMessageNotReadableException.class)
-    public ResponseEntity<ProjectResponseDTO> handleHttpMessageNotReadableException(HttpMessageNotReadableException e){
-        return new ResponseEntity<>(exceptionService.formatErrorResponse(e), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(value = ProjectCodeExistException.class)
+    public ResponseEntity<ProjectResponseDTO> handleProjectCodeExistException(ProjectCodeExistException e){
+        return new ResponseEntity<>(exceptionService.formatBadRequest(e), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = RecordNotFoundException.class)
+    public ResponseEntity<ProjectResponseDTO> handleRecordNotFoundException(RecordNotFoundException e){
+        return new ResponseEntity<>(exceptionService.formatBadRequest(e), HttpStatus.BAD_REQUEST);
+    }
+    
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
         String field = Objects.requireNonNull(e.getFieldError()).getField();

@@ -1,7 +1,7 @@
 package com.csv.communitytrackerjava.controller;
-import com.csv.communitytrackerjava.dto.ProjectValidationDTO;
+import com.csv.communitytrackerjava.dto.ProjectAddDTO;
+import com.csv.communitytrackerjava.dto.ProjectUpdateDTO;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
-import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
 import com.csv.communitytrackerjava.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +25,13 @@ public class ProjectController {
     }
 
     @PostMapping("")
-    public ResponseEntity<ProjectResponseDTO> addProject(@Valid @RequestBody ProjectValidationDTO projectValidationDTO) {
-        return new ResponseEntity<>(projectService.saveProject(projectValidationDTO), HttpStatus.CREATED);
+    public ResponseEntity<ProjectResponseDTO> addProject(@Valid @RequestBody ProjectAddDTO projectAddDTO) {
+        return new ResponseEntity<>(projectService.saveProject(projectAddDTO), HttpStatus.CREATED);
     }
     
     @PatchMapping("/{id}")
-    public ResponseEntity<ProjectResponseDTO> update(@Valid @RequestBody Project project, @PathVariable Integer id) throws RecordNotFoundException {
-        return new ResponseEntity<>(projectService.updateProject(project, id), HttpStatus.ACCEPTED);
+    public ResponseEntity<ProjectResponseDTO> update(@Valid @RequestBody ProjectUpdateDTO projectUpdateDTO, @PathVariable Integer id) throws Exception {
+        return new ResponseEntity<>(projectService.updateProject(projectUpdateDTO, id), HttpStatus.ACCEPTED);
     }
 
 }

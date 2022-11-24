@@ -2,7 +2,9 @@ package com.csv.communitytrackerjava.service;
 
 import com.csv.communitytrackerjava.dto.ProjectPayloadDTO;
 import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
-import com.csv.communitytrackerjava.dto.ProjectValidationDTO;
+import com.csv.communitytrackerjava.dto.ProjectUpdateDTO;
+import com.csv.communitytrackerjava.dto.ProjectAddDTO;
+import com.csv.communitytrackerjava.exception.ProjectCodeExistException;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.mapper.ProjectMapper;
 import com.csv.communitytrackerjava.model.Project;
@@ -13,9 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.ObjectError;
 
-import javax.persistence.EntityExistsException;
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -33,12 +32,11 @@ public class ProjectServiceImpl implements ProjectService {
     ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
     
     @Override
-    public ProjectResponseDTO saveProject(ProjectValidationDTO projectValidationDTO) {
-        String projectDesc = projectValidationDTO.getProjectDesc();
-        projectValidationDTO.setProjectDesc(CaseUtils.toCamelCase(projectDesc, true, ' '));
-
-        Project project = projectMapper.validationToModel(projectValidationDTO);
-        project = projectRepository.save(project);
+    public ProjectResponseDTO saveProject(ProjectAddDTO projectAddDTO) {
+        String projectDesc = projectAddDTO.getProjectDesc();
+        projectAddDTO.setProjectDesc(CaseUtils.toCamelCase(projectDesc, true, ' '));
+        Project project = projectMapper.validationToModel(projectAddDTO);
+        projectRepository.save(project);
 
         projectResponseDTO.setErrors(List.of(new ObjectError("test", "test")));
         projectResponseDTO.setMessage("Successfully add project.");
@@ -49,19 +47,19 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectResponseDTO updateProject(Project project, int id) throws RecordNotFoundException {
-
-        Project projectFound = projectRepository.findById(id).orElseThrow();
-        String newDesc = project.getProjectDesc().isEmpty() ? projectFound.getProjectDesc() : CaseUtils.toCamelCase(project.getProjectDesc(), true, ' ');
+    public ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, int id) throws Exception{
+        Project projectFound = projectRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
+        String projectDesc = projectUpdateDTO.getProjectDesc();
+        String newDesc = projectDesc == null || projectDesc.isEmpty() ? projectFound.getProjectDesc() : CaseUtils.toCamelCase(projectUpdateDTO.getProjectDesc(), true, ' ');
         projectFound.setProjectDesc(newDesc);
-        Optional<Project> mapCode = Optional.ofNullable(projectRepository.findByProjectCode(project.getProjectCode()));
+        Optional<Project> mapCode = Optional.ofNullable(projectRepository.findByProjectCode(projectUpdateDTO.getProjectCode()));
         if (mapCode.isEmpty()) {
-            projectFound.setProjectCode(project.getProjectCode() == null ? projectFound.getProjectCode() : project.getProjectCode());
-            projectRepository.save(projectFound);
-        } 
-        else {
-            throw new NoSuchElementException("Code already existing");
+            String projectCode = projectUpdateDTO.getProjectCode();
+            projectFound.setProjectCode(projectCode == null || projectCode.isEmpty() ? projectFound.getProjectCode() : projectUpdateDTO.getProjectCode());
+        } else {
+            throw new ProjectCodeExistException("Project code already exist.");
         }
+        projectRepository.save(projectFound);
         projectResponseDTO.setMessage("Successfully update project.");
         payloadDTO.setAdditionalProperty("projects", projectMapper.toDTO(projectFound));
         projectResponseDTO.setPayload(payloadDTO);

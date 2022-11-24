@@ -2,7 +2,7 @@ package com.csv.communitytrackerjava.dto;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class ProjectValidationDTO {
+public class ProjectAddDTO {
 
     private Integer projectId;
 

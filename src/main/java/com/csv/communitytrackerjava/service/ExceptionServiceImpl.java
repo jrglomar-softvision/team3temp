@@ -18,11 +18,11 @@ public class ExceptionServiceImpl implements ExceptionService {
     
     ProjectPayloadDTO projectPayloadDTO = new ProjectPayloadDTO();
     
-    
     @Override
-    public ProjectResponseDTO formatErrorResponse(Exception exception) {
+    public ProjectResponseDTO formatBadRequest(Exception exception) {
 
         ApiErrorDTO apiError = new ApiErrorDTO(BAD_REQUEST);
+        apiError.setType(exception.getClass().getTypeName());
         projectResponseDTO.setErrors(List.of(apiError));
         projectResponseDTO.setMessage(exception.getMessage());
         projectPayloadDTO.setAdditionalProperty("projects", Collections.emptyList());

@@ -4,5 +4,5 @@ import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
 import com.csv.communitytrackerjava.model.Project;
 
 public interface ExceptionService {
-    ProjectResponseDTO formatErrorResponse (Exception exception);
+    ProjectResponseDTO formatBadRequest (Exception exception);
 }
