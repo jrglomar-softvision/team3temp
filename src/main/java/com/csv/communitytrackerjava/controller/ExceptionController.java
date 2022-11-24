@@ -2,8 +2,10 @@ package com.csv.communitytrackerjava.controller;
 
 import com.csv.communitytrackerjava.dto.ProjectPayloadDTO;
 import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
+import com.csv.communitytrackerjava.service.ExceptionService;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.postgresql.util.PSQLException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
@@ -12,14 +14,25 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 @ControllerAdvice
 public class ExceptionController {
 
+
+    @Autowired
+    ExceptionService exceptionService;
+
     ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
 
     ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
+    
+    @ExceptionHandler(value = NoSuchElementException.class)
+    public ResponseEntity<ProjectResponseDTO> handleNoSuchElementException(NoSuchElementException e){
+        return new ResponseEntity<>(exceptionService.formatErrorResponse(e, "Record Not Found"), HttpStatus.BAD_REQUEST);
+    }
+    
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {

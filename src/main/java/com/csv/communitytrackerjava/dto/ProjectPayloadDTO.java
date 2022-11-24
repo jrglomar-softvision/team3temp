@@ -1,5 +1,6 @@
 package com.csv.communitytrackerjava.dto;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class ProjectPayloadDTO {
 
     @JsonProperty("projects")
-    private List<Project> projects = null;
+    private List<Project> projects;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
