@@ -11,6 +11,9 @@ import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.repository.ProjectRepository;
 import org.apache.commons.text.CaseUtils;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.ObjectError;
@@ -26,6 +29,9 @@ public class ProjectServiceImpl implements ProjectService {
     
     @Autowired
     ProjectMapper projectMapper;
+    
+    @Autowired
+    ModelMapper modelMapper;
 
     ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
     
@@ -51,11 +57,18 @@ public class ProjectServiceImpl implements ProjectService {
         Project projectFound = projectRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
         String projectDesc = projectUpdateDTO.getProjectDesc();
         String newDesc = projectDesc == null || projectDesc.isEmpty() ? projectFound.getProjectDesc() : CaseUtils.toCamelCase(projectUpdateDTO.getProjectDesc(), true, ' ');
-        projectFound.setProjectDesc(newDesc);
+        projectUpdateDTO.setProjectDesc(newDesc);
         Optional<Project> mapCode = Optional.ofNullable(projectRepository.findByProjectCode(projectUpdateDTO.getProjectCode()));
+
+        modelMapper.getConfiguration()
+                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
+                .setMatchingStrategy(MatchingStrategies.STANDARD)
+                .setSkipNullEnabled(true);
+
         if (mapCode.isEmpty()) {
-            String projectCode = projectUpdateDTO.getProjectCode();
-            projectFound.setProjectCode(projectCode == null || projectCode.isEmpty() ? projectFound.getProjectCode() : projectUpdateDTO.getProjectCode());
+//            String projectCode = projectUpdateDTO.getProjectCode();
+//            projectFound.setProjectCode(projectCode == null || projectCode.isEmpty() ? projectFound.getProjectCode() : projectUpdateDTO.getProjectCode());
+            modelMapper.map(projectUpdateDTO, projectFound);
         } else {
             throw new ProjectCodeExistException("Project code already exist.");
         }
