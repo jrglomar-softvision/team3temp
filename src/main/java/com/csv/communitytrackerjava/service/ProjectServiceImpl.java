@@ -53,7 +53,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, int id) throws Exception {
         Project projectFound = projectRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
-        projectRepository.findByProjectCode(projectUpdateDTO.getProjectCode()).orElseThrow(() -> new ProjectCodeExistException("Project code already exist."));
+        Optional<Project> projectCodeCheck = projectRepository.findByProjectCode(projectUpdateDTO.getProjectCode());
         String projectDesc = projectUpdateDTO.getProjectDesc();
         String newDesc = projectDesc == null || projectDesc.isEmpty() ? projectFound.getProjectDesc() : CaseUtils.toCamelCase(projectUpdateDTO.getProjectDesc(), true, ' ');
         projectUpdateDTO.setProjectDesc(newDesc);
@@ -63,7 +63,11 @@ public class ProjectServiceImpl implements ProjectService {
                 .setMatchingStrategy(MatchingStrategies.STANDARD)
                 .setSkipNullEnabled(true);
 
+        if(projectCodeCheck.isPresent()) {
+            throw new ProjectCodeExistException("Project code already exist.");
+        }
 
+        projectFound.setProjectCode(projectUpdateDTO.getProjectCode());
         modelMapper.map(projectUpdateDTO, projectFound);
         payloadDTO.setAdditionalProperty("projects", projectMapper.toDTO(projectRepository.save(projectFound)));
         return toProjectResponseDTO("Successfully update project.", payloadDTO);
