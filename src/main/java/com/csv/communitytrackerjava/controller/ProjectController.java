@@ -1,4 +1,5 @@
 package com.csv.communitytrackerjava.controller;
+
 import com.csv.communitytrackerjava.dto.ProjectAddDTO;
 import com.csv.communitytrackerjava.dto.ProjectUpdateDTO;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
@@ -17,10 +18,10 @@ public class ProjectController {
 
     @Autowired
     ProjectService projectService;
-    
+
 
     @GetMapping
-    public ResponseEntity<ProjectResponseDTO> findAll(){
+    public ResponseEntity<ProjectResponseDTO> findAll() {
         return new ResponseEntity<>(projectService.findAllProject(), HttpStatus.OK);
     }
 
@@ -28,10 +29,15 @@ public class ProjectController {
     public ResponseEntity<ProjectResponseDTO> addProject(@Valid @RequestBody ProjectAddDTO projectAddDTO) {
         return new ResponseEntity<>(projectService.saveProject(projectAddDTO), HttpStatus.CREATED);
     }
-    
+
     @PatchMapping("/{id}")
     public ResponseEntity<ProjectResponseDTO> update(@Valid @RequestBody ProjectUpdateDTO projectUpdateDTO, @PathVariable Integer id) throws Exception {
         return new ResponseEntity<>(projectService.updateProject(projectUpdateDTO, id), HttpStatus.ACCEPTED);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable int id) throws RecordNotFoundException {
+        projectService.deleteProject(id);
+        return new ResponseEntity<>("Project id " + String.valueOf(id) + " was successfully deleted.", HttpStatus.OK);
+    }
 }

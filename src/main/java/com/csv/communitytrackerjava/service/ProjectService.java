@@ -9,4 +9,6 @@ public interface ProjectService {
     ProjectResponseDTO saveProject(ProjectAddDTO projectAddDTO);
     ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, int id) throws Exception;
     ProjectResponseDTO findAllProject();
+    void deleteProject(int id) throws RecordNotFoundException;
+
 }

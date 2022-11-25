@@ -26,17 +26,17 @@ import java.util.Optional;
 public class ProjectServiceImpl implements ProjectService {
     @Autowired
     ProjectRepository projectRepository;
-    
+
     @Autowired
     ProjectMapper projectMapper;
-    
+
     @Autowired
     ModelMapper modelMapper;
-    
+
     ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
 
     ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
-    
+
     @Override
     public ProjectResponseDTO saveProject(ProjectAddDTO projectAddDTO) {
         String projectDesc = projectAddDTO.getProjectDesc();
@@ -53,7 +53,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, int id) throws Exception{
+    public ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, int id) throws Exception {
         Project projectFound = projectRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
         Project projectCodeCheck = projectRepository.findByProjectCode(projectUpdateDTO.getProjectCode()).orElseThrow(() -> new ProjectCodeExistException("Project code already exist."));
         String projectDesc = projectUpdateDTO.getProjectDesc();
@@ -65,13 +65,6 @@ public class ProjectServiceImpl implements ProjectService {
                 .setMatchingStrategy(MatchingStrategies.STANDARD)
                 .setSkipNullEnabled(true);
 
-//        if (mapCode.isEmpty()) {
-//            String projectCode = projectUpdateDTO.getProjectCode();
-//            projectFound.setProjectCode(projectCode == null || projectCode.isEmpty() ? projectFound.getProjectCode() : projectUpdateDTO.getProjectCode());
-//        } else {
-//            throw new ProjectCodeExistException("Project code already exist.");
-//        }
-//        projectRepository.save(projectFound);
 
         modelMapper.map(projectUpdateDTO, projectFound);
         payloadDTO.setAdditionalProperty("projects", projectMapper.toDTO(projectRepository.save(projectFound)));
@@ -85,11 +78,25 @@ public class ProjectServiceImpl implements ProjectService {
         return toProjectResponseDTO("Successfully fetch all projects.", payloadDTO);
 
     }
-    
-    public ProjectResponseDTO toProjectResponseDTO(String message, ProjectPayloadDTO payloadDTO){
+
+    @Override
+    public void deleteProject(int id) throws RecordNotFoundException {
+        Project projectFound = projectRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Project to delete is not found."));
+        modelMapper.getConfiguration()
+                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
+                .setMatchingStrategy(MatchingStrategies.STANDARD)
+                .setSkipNullEnabled(false);
+        Project project = new Project();
+        modelMapper.map(project, projectFound);
+        projectFound.setIsActive(false);
+        projectRepository.save(projectFound);
+    }
+
+    public ProjectResponseDTO toProjectResponseDTO(String message, ProjectPayloadDTO payloadDTO) {
         projectResponseDTO.setMessage(message);
         projectResponseDTO.setPayload(payloadDTO);
-        
+
         return projectResponseDTO;
     }
 
