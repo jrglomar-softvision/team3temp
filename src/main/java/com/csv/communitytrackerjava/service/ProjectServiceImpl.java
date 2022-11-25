@@ -32,9 +32,9 @@ public class ProjectServiceImpl implements ProjectService {
     
     @Autowired
     ModelMapper modelMapper;
-
-    ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
     
+    ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
+
     ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
     
     @Override
@@ -55,39 +55,41 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, int id) throws Exception{
         Project projectFound = projectRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
+        Project projectCodeCheck = projectRepository.findByProjectCode(projectUpdateDTO.getProjectCode()).orElseThrow(() -> new ProjectCodeExistException("Project code already exist."));
         String projectDesc = projectUpdateDTO.getProjectDesc();
         String newDesc = projectDesc == null || projectDesc.isEmpty() ? projectFound.getProjectDesc() : CaseUtils.toCamelCase(projectUpdateDTO.getProjectDesc(), true, ' ');
         projectUpdateDTO.setProjectDesc(newDesc);
-        Optional<Project> mapCode = Optional.ofNullable(projectRepository.findByProjectCode(projectUpdateDTO.getProjectCode()));
 
         modelMapper.getConfiguration()
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
                 .setMatchingStrategy(MatchingStrategies.STANDARD)
                 .setSkipNullEnabled(true);
 
-        if (mapCode.isEmpty()) {
+//        if (mapCode.isEmpty()) {
 //            String projectCode = projectUpdateDTO.getProjectCode();
 //            projectFound.setProjectCode(projectCode == null || projectCode.isEmpty() ? projectFound.getProjectCode() : projectUpdateDTO.getProjectCode());
-            modelMapper.map(projectUpdateDTO, projectFound);
-        } else {
-            throw new ProjectCodeExistException("Project code already exist.");
-        }
-        projectRepository.save(projectFound);
-        projectResponseDTO.setMessage("Successfully update project.");
-        payloadDTO.setAdditionalProperty("projects", projectMapper.toDTO(projectFound));
-        projectResponseDTO.setPayload(payloadDTO);
-        
+//        } else {
+//            throw new ProjectCodeExistException("Project code already exist.");
+//        }
+//        projectRepository.save(projectFound);
 
-        return projectResponseDTO;
+        modelMapper.map(projectUpdateDTO, projectFound);
+        payloadDTO.setAdditionalProperty("projects", projectMapper.toDTO(projectRepository.save(projectFound)));
+        return toProjectResponseDTO("Successfully update project.", payloadDTO);
     }
 
     @Override
     public ProjectResponseDTO findAllProject() {
 
-        projectResponseDTO.setMessage("Successfully fetch all projects.");
         payloadDTO.setAdditionalProperty("projects", projectMapper.toListDTO(projectRepository.findAll()));
-        projectResponseDTO.setPayload(payloadDTO);
+        return toProjectResponseDTO("Successfully fetch all projects.", payloadDTO);
 
+    }
+    
+    public ProjectResponseDTO toProjectResponseDTO(String message, ProjectPayloadDTO payloadDTO){
+        projectResponseDTO.setMessage(message);
+        projectResponseDTO.setPayload(payloadDTO);
+        
         return projectResponseDTO;
     }
 
