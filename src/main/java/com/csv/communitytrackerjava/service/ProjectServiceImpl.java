@@ -10,6 +10,10 @@ import com.csv.communitytrackerjava.mapper.ProjectMapper;
 import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.repository.ProjectRepository;
 import org.apache.commons.text.CaseUtils;
+
+import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +26,10 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     ProjectMapper projectMapper;
-
+    
+    @Autowired
+    ModelMapper modelMapper;
+    
     ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
 
     ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
@@ -30,7 +37,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectResponseDTO saveProject(ProjectAddDTO projectAddDTO) throws ProjectCodeExistException {
         String projectCode = projectAddDTO.getProjectCode();
-        Optional<Project> mapCode = Optional.ofNullable(projectRepository.findByProjectCode(projectCode));
+        Optional<Project> mapCode = projectRepository.findByProjectCode(projectCode);
         if (mapCode.isPresent()) {
             throw new ProjectCodeExistException("Project code already exist.");
         }
@@ -46,33 +53,34 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, int id) throws Exception {
         Project projectFound = projectRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
+        projectRepository.findByProjectCode(projectUpdateDTO.getProjectCode()).orElseThrow(() -> new ProjectCodeExistException("Project code already exist."));
         String projectDesc = projectUpdateDTO.getProjectDesc();
-        String newDesc = projectDesc == null || projectDesc.isEmpty()
-                ? projectFound.getProjectDesc()
-                : CaseUtils.toCamelCase(projectUpdateDTO.getProjectDesc(), true, ' ');
-        projectFound.setProjectDesc(newDesc);
-        Optional<Project> mapCode = Optional.ofNullable(projectRepository.findByProjectCode(projectUpdateDTO.getProjectCode()));
-        if (mapCode.isEmpty()) {
-            String projectCode = projectUpdateDTO.getProjectCode();
-            projectFound.setProjectCode(projectCode == null || projectCode.isEmpty()
-                    ? projectFound.getProjectCode()
-                    : projectUpdateDTO.getProjectCode());
-        } else {
-            throw new ProjectCodeExistException("Project code already exist.");
-        }
-        projectRepository.save(projectFound);
-        setProjectResponseDTO("Successfully update project.", projectMapper.toDTO(projectFound));
+        String newDesc = projectDesc == null || projectDesc.isEmpty() ? projectFound.getProjectDesc() : CaseUtils.toCamelCase(projectUpdateDTO.getProjectDesc(), true, ' ');
+        projectUpdateDTO.setProjectDesc(newDesc);
 
-        return projectResponseDTO;
+        modelMapper.getConfiguration()
+                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
+                .setMatchingStrategy(MatchingStrategies.STANDARD)
+                .setSkipNullEnabled(true);
+
+
+        modelMapper.map(projectUpdateDTO, projectFound);
+        payloadDTO.setAdditionalProperty("projects", projectMapper.toDTO(projectRepository.save(projectFound)));
+        return toProjectResponseDTO("Successfully update project.", payloadDTO);
     }
 
     @Override
     public ProjectResponseDTO findAllProject() {
 
-        projectResponseDTO.setMessage("Successfully fetch all projects.");
         payloadDTO.setAdditionalProperty("projects", projectMapper.toListDTO(projectRepository.findAll()));
-        projectResponseDTO.setPayload(payloadDTO);
+        return toProjectResponseDTO("Successfully fetch all projects.", payloadDTO);
 
+    }
+    
+    public ProjectResponseDTO toProjectResponseDTO(String message, ProjectPayloadDTO payloadDTO){
+        projectResponseDTO.setMessage(message);
+        projectResponseDTO.setPayload(payloadDTO);
+        
         return projectResponseDTO;
     }
 

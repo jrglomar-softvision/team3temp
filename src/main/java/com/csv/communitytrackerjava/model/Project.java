@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "projects")
+@Table(name = "project")
 public class Project extends BaseAuditClass {
 
     @Id
