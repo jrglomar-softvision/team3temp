@@ -14,13 +14,13 @@ public class Project extends BaseAuditClass {
     @Column(updatable = false, nullable = false)
     private Integer projectId;
 
-    @Column(length = 100, nullable = false)
+    @Column(name = "projectdesc", length = 100, nullable = false)
     private String projectDesc;
 
-    @Column(length = 100, unique = true, nullable = false)
+    @Column(name="projectcode", length = 100, unique = true, nullable = false)
     private String projectCode;
 
-    @Column(nullable = false)
+    @Column(name="isactive", nullable = false)
     private Boolean isActive;
 
     public Integer getProjectId() {

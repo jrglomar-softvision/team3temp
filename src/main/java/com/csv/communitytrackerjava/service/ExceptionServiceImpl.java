@@ -13,13 +13,10 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @Service
 public class ExceptionServiceImpl implements ExceptionService {
 
-    ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
-
-    ProjectPayloadDTO projectPayloadDTO = new ProjectPayloadDTO();
 
     @Override
     public ProjectResponseDTO formatBadRequest(Exception exception) {
-
+        ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
         setProjectResponseDTO(exception);
         projectResponseDTO.setMessage(exception.getMessage());
         return projectResponseDTO;
@@ -27,6 +24,7 @@ public class ExceptionServiceImpl implements ExceptionService {
 
     @Override
     public ProjectResponseDTO formatBadRequest(Exception exception, String message) {
+        ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
         setProjectResponseDTO(exception);
         projectResponseDTO.setMessage(message);
         return projectResponseDTO;
@@ -34,18 +32,21 @@ public class ExceptionServiceImpl implements ExceptionService {
 
     private ProjectResponseDTO setProjectResponseDTO(Exception exception) {
         ApiErrorDTO apiError = new ApiErrorDTO(BAD_REQUEST);
-        apiError.setType(exception.getClass().getTypeName());
-        projectPayloadDTO.setAdditionalProperty("projects", Collections.emptyList());
-        return toProjectResponseDTO(apiError, exception.getMessage(), projectPayloadDTO);
+        apiError.setType(exception.getClass().getName());
+        return toProjectResponseDTO(apiError, exception.getMessage());
     }
 
+    public ProjectResponseDTO toProjectResponseDTO(ApiErrorDTO apiError, String message){
+        // Payload as empty
+        ProjectPayloadDTO projectPayloadDTO = new ProjectPayloadDTO();
+        projectPayloadDTO.setAdditionalProperty("projects", Collections.emptyList());
 
-    public ProjectResponseDTO toProjectResponseDTO(ApiErrorDTO apiError, String message, ProjectPayloadDTO projectPayloadDTO){
+        // Settings response
+        ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
         projectResponseDTO.setErrors(List.of(apiError));
         projectResponseDTO.setMessage(message);
         projectResponseDTO.setPayload(projectPayloadDTO);
         return projectResponseDTO;
-
     }
 
 }

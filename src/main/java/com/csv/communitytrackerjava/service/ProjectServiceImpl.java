@@ -29,33 +29,36 @@ public class ProjectServiceImpl implements ProjectService {
     
     @Autowired
     ModelMapper modelMapper;
-    
-    ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
-
-    ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
+   
 
     @Override
     public ProjectResponseDTO saveProject(ProjectAddDTO projectAddDTO) throws ProjectCodeExistException {
+        ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
+        
         String projectCode = projectAddDTO.getProjectCode();
         Optional<Project> mapCode = projectRepository.findByProjectCode(projectCode);
         if (mapCode.isPresent()) {
             throw new ProjectCodeExistException("Project code already exist.");
         }
         String projectDesc = projectAddDTO.getProjectDesc();
+
         projectAddDTO.setProjectDesc(CaseUtils.toCamelCase(projectDesc, true, ' '));
         Project project = projectMapper.validationToModel(projectAddDTO);
         projectRepository.save(project);
-        setProjectResponseDTO("Successfully add project.", projectMapper.toDTO(project));
-
-        return projectResponseDTO;
+        payloadDTO.setAdditionalProperty("project", projectMapper.toDTO(project));
+        
+        return toProjectResponseDTO("Successfully add project.", payloadDTO);
     }
 
     @Override
     public ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, int id) throws Exception {
+        ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
+        ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
+        
         Project projectFound = projectRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
         Optional<Project> projectCodeCheck = projectRepository.findByProjectCode(projectUpdateDTO.getProjectCode());
         String projectDesc = projectUpdateDTO.getProjectDesc();
-        String newDesc = projectDesc == null || projectDesc.isEmpty() ? projectFound.getProjectDesc() : CaseUtils.toCamelCase(projectUpdateDTO.getProjectDesc(), true, ' ');
+        String newDesc = projectDesc.isEmpty() ? projectFound.getProjectDesc() : CaseUtils.toCamelCase(projectUpdateDTO.getProjectDesc(), true, ' ');
         projectUpdateDTO.setProjectDesc(newDesc);
 
         modelMapper.getConfiguration()
@@ -75,23 +78,17 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectResponseDTO findAllProject() {
-
+        ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
         payloadDTO.setAdditionalProperty("projects", projectMapper.toListDTO(projectRepository.findAll()));
         return toProjectResponseDTO("Successfully fetch all projects.", payloadDTO);
-
     }
     
     public ProjectResponseDTO toProjectResponseDTO(String message, ProjectPayloadDTO payloadDTO){
+        ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
         projectResponseDTO.setMessage(message);
         projectResponseDTO.setPayload(payloadDTO);
-        
         return projectResponseDTO;
     }
 
-    private void setProjectResponseDTO(String message, Object payload) {
-        projectResponseDTO.setMessage(message);
-        payloadDTO.setAdditionalProperty("projects", payload);
-        projectResponseDTO.setPayload(payloadDTO);
-    }
 
 }
