@@ -43,7 +43,7 @@ public class ExceptionController {
         assert code != null;
         String message = switch (code) {
             case "Size" -> "Size of " + field + " must not be more than 100";
-            case "NotNull" -> field + " is required";
+            case "NotNull", "NotEmpty", "NotBlank" -> field + " is required";
             default -> "MethodArgumentNotValidException caught";
         };
         return new ResponseEntity<>(exceptionService.formatBadRequest(e, message), HttpStatus.BAD_REQUEST);
