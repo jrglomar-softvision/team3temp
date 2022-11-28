@@ -22,10 +22,6 @@ public class ExceptionController {
     @Autowired
     ExceptionService exceptionService;
 
-    ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
-
-    ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
-
     @ExceptionHandler(value = ProjectCodeExistException.class)
     public ResponseEntity<ProjectResponseDTO> handleProjectCodeExistException(ProjectCodeExistException e) {
         return new ResponseEntity<>(exceptionService.formatBadRequest(e), HttpStatus.BAD_REQUEST);
