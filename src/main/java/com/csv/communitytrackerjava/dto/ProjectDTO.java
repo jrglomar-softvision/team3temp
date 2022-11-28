@@ -1,8 +1,11 @@
 package com.csv.communitytrackerjava.dto;
 
+import lombok.Data;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+@Data
 public class ProjectDTO {
 
     @NotNull
@@ -16,27 +19,4 @@ public class ProjectDTO {
     @NotNull
     private String projectCode;
 
-    public Integer getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
-    }
-
-    public String getProjectDesc() {
-        return projectDesc;
-    }
-
-    public void setProjectDesc(String projectDesc) {
-        this.projectDesc = projectDesc;
-    }
-
-    public String getProjectCode() {
-        return projectCode;
-    }
-
-    public void setProjectCode(String projectCode) {
-        this.projectCode = projectCode;
-    }
 }

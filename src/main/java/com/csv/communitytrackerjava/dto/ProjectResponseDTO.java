@@ -1,6 +1,7 @@
 package com.csv.communitytrackerjava.dto;
 
 import com.fasterxml.jackson.annotation.*;
+import lombok.Data;
 
 import javax.annotation.Generated;
 import java.util.Collections;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Data
 @JsonPropertyOrder({
         "errors",
         "message",
@@ -24,37 +26,7 @@ public class ProjectResponseDTO {
     @JsonProperty("payload")
     private ProjectPayloadDTO payload;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
-    @JsonProperty("errors")
-    public List<Object> getErrors() {
-        return errors;
-    }
-
-    @JsonProperty("errors")
-    public void setErrors(List<Object> errors) {
-        this.errors = errors;
-    }
-
-    @JsonProperty("message")
-    public String getMessage() {
-        return message;
-    }
-
-    @JsonProperty("message")
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    @JsonProperty("payload")
-    public ProjectPayloadDTO getPayload() {
-        return payload;
-    }
-
-    @JsonProperty("payload")
-    public void setPayload(ProjectPayloadDTO payload) {
-        this.payload = payload;
-    }
+    private Map<String, Object> additionalProperties = new HashMap<>();
 
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
