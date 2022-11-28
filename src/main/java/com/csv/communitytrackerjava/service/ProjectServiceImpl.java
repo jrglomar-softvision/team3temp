@@ -52,7 +52,6 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, int id) throws Exception {
-        ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
         ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
         
         Project projectFound = projectRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
