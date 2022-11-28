@@ -1,5 +1,6 @@
 package com.csv.communitytrackerjava.dto;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -8,11 +9,11 @@ public class ProjectAddDTO {
     private Integer projectId;
 
     @Size(max = 100)
-    @NotNull
+    @NotEmpty
     private String projectDesc;
 
     @Size(max = 100)
-    @NotNull
+    @NotEmpty
     private String projectCode;
 
     @NotNull
