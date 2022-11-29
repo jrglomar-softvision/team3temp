@@ -7,7 +7,9 @@ import com.csv.communitytrackerjava.dto.ProjectUpdateDTO;
 import com.csv.communitytrackerjava.exception.ProjectCodeExistException;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.mapper.ProjectMapper;
+import com.csv.communitytrackerjava.model.People;
 import com.csv.communitytrackerjava.model.Project;
+import com.csv.communitytrackerjava.repository.PeopleRepository;
 import com.csv.communitytrackerjava.repository.ProjectRepository;
 import org.apache.commons.text.CaseUtils;
 
@@ -15,14 +17,20 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
     @Autowired
     ProjectRepository projectRepository;
+    
+    @Autowired
+    PeopleRepository peopleRepository;
 
     @Autowired
     ProjectMapper projectMapper;
@@ -51,7 +59,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, int id) throws Exception {
+    public ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, Integer id) throws Exception {
         ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
         
         Project projectFound = projectRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
@@ -77,10 +85,30 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectResponseDTO findAllProject() {
         ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
-        payloadDTO.setAdditionalProperty("projects", projectMapper.toListDTO(projectRepository.findAll()));
+        payloadDTO.setAdditionalProperty("projects", projectRepository.findAll());
         return toProjectResponseDTO("Successfully fetch all projects.", payloadDTO);
     }
-    
+
+    @Override
+    public Page<List<Project>> findPeopleByProjectId(Pageable pageable, Integer id) throws Exception{
+        ProjectPayloadDTO projectPayloadDTO = new ProjectPayloadDTO();
+
+        Project projectFound = projectRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
+
+        projectPayloadDTO.setAdditionalProperty("project", projectFound);
+        
+        return projectRepository.findByProjectId(id, pageable);
+
+//        return toProjectResponseDTO("Successfully fetch all projects.", projectPayloadDTO);
+    }
+
+    @Override
+    public Page<List<Project>> findByProjectDesc(Pageable pageable, String projectDesc) throws Exception{
+
+        return projectRepository.findByProjectDesc(projectDesc, pageable);
+
+    }
+
     public ProjectResponseDTO toProjectResponseDTO(String message, ProjectPayloadDTO payloadDTO){
         ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
         projectResponseDTO.setMessage(message);

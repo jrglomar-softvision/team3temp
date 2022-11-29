@@ -1,11 +1,13 @@
 package com.csv.communitytrackerjava.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -17,7 +19,7 @@ public class Project extends BaseAuditClass {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(updatable = false, nullable = false)
+    @Column(name="projectid", updatable = false, nullable = false)
     private Integer projectId;
 
     @Column(name = "projectdesc", length = 100, nullable = false)
@@ -28,5 +30,8 @@ public class Project extends BaseAuditClass {
 
     @Column(name="isactive", nullable = false)
     private Boolean isActive;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project" ,fetch = FetchType.LAZY)
+    private List<People> people;
 
 }
