@@ -6,7 +6,6 @@ import lombok.Data;
 import javax.validation.constraints.Size;
 
 @Data
-@AllArgsConstructor
 public class ProjectUpdateDTO {
 
     @Size(max = 100)

@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 
 public class ProjectControllerTestPatch {
-    ProjectDTO jojoProj, ravenProj;
+    ProjectDTO jojoProj;
 
     @MockBean
     private ProjectService projectService;
@@ -49,7 +49,6 @@ public class ProjectControllerTestPatch {
     @BeforeEach
     void setup() {
         jojoProj = new ProjectDTO(1, "projectDesc", "ProjectCode");
-        ravenProj = new ProjectDTO(2, "projectDesc2", "ProjectCode2");
 
 
     }
@@ -57,8 +56,6 @@ public class ProjectControllerTestPatch {
     @Test
     void updateProjectSuccess() throws Exception {
         //Arrange
-        jojoProj.setProjectDesc("Update Project Desc");
-        jojoProj.setProjectCode("Update Project Code");
 
         ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
         ProjectPayloadDTO projectPayloadDTO = new ProjectPayloadDTO();
@@ -96,7 +93,7 @@ public class ProjectControllerTestPatch {
         //ACT
         mockMvc.perform(patch("/projects/{id}", 2)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(ravenProj)))
+                        .content(objectMapper.writeValueAsString(jojoProj)))
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ProjectCodeExistException))
                 .andExpect(result -> assertEquals("Project code already exist.", Objects
                         .requireNonNull(result.getResolvedException()).getMessage()))
@@ -113,7 +110,7 @@ public class ProjectControllerTestPatch {
         //ACT
         mockMvc.perform(patch("/projects/{id}", 2)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(ravenProj)))
+                        .content(objectMapper.writeValueAsString(jojoProj)))
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof RecordNotFoundException))
                 .andExpect(result -> assertEquals("Record not found.", Objects
                         .requireNonNull(result.getResolvedException()).getMessage()))
