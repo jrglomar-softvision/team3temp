@@ -23,10 +23,10 @@ public class Project extends BaseAuditClass {
     @Column(name = "projectdesc", length = 100, nullable = false)
     private String projectDesc;
 
-    @Column(name="projectcode", length = 100, unique = true, nullable = false)
+    @Column(name = "projectcode", length = 100, nullable = false)
     private String projectCode;
 
-    @Column(name="isactive", nullable = false)
+    @Column(name = "isactive", nullable = false)
     private Boolean isActive;
 
 }

@@ -1,6 +1,9 @@
 package com.csv.communitytrackerjava.controller;
 
+import com.csv.communitytrackerjava.dto.ProjectPayloadDTO;
 import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
+import com.csv.communitytrackerjava.exception.ProjectCodeExistException;
+import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.service.ExceptionService;
 import com.csv.communitytrackerjava.service.ProjectService;
@@ -8,14 +11,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,8 +29,10 @@ class ProjectControllerTest {
     Project delete, save;
     @MockBean
     ProjectService projectService;
-    @Autowired
+    @MockBean
     ExceptionService exceptionService;
+
+
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -40,17 +47,50 @@ class ProjectControllerTest {
 
     @Test
     public void delete() throws Exception {
-//Arrange
-
+        //Arrange
         ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
-        projectResponseDTO.setMessage("Project was already deleted.");
-        Mockito.when(projectService.deleteProject(delete.getProjectId())).thenReturn(projectResponseDTO);
+        ProjectPayloadDTO projectPayloadDTO = new ProjectPayloadDTO();
+        save.setIsActive(false);
+        projectResponseDTO.setErrors(null);
+        projectResponseDTO.setMessage("Successfully delete project.");
+        projectPayloadDTO.setAdditionalProperty("projects", save);
+        projectResponseDTO.setPayload(projectPayloadDTO);
+        when(projectService.deleteProject(anyInt()))
+                .thenReturn(projectResponseDTO);
+
 
         //Act
-        mockMvc.perform(put("/projects/{id}", 1)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/projects/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(save)))
+                .andExpect(jsonPath("$.payload.projects.isActive", CoreMatchers.is(save.getIsActive())))
+                .andExpect(jsonPath("$.message", CoreMatchers.is(projectResponseDTO.getMessage())))
+                .andExpect(status().isAccepted());
+    }
+
+    @Test
+    public void deleteRecordNotFound() throws Exception {
+        //Arrange
+        when(projectService.deleteProject(anyInt()))
+                .thenThrow(new RecordNotFoundException("Project to delete is not found."));
+        //Act
+        mockMvc.perform(MockMvcRequestBuilders.delete("/projects/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(save)))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof RecordNotFoundException))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void deleteAlreadyDeleted() throws Exception {
+        //Arrange
+        when(projectService.deleteProject(anyInt()))
+                .thenThrow(new ProjectCodeExistException("Project was already deleted."));
+        //Act
+        mockMvc.perform(MockMvcRequestBuilders.delete("/projects/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(delete)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.isAc tive", CoreMatchers.is(delete.getIsActive())));
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ProjectCodeExistException))
+                .andExpect(status().isBadRequest());
     }
 }

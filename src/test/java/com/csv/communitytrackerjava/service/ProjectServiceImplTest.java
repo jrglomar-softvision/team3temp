@@ -1,7 +1,6 @@
 package com.csv.communitytrackerjava.service;
 
 import com.csv.communitytrackerjava.exception.ProjectCodeExistException;
-import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.mapper.ProjectMapperImpl;
 import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.repository.ProjectRepository;
@@ -40,7 +39,7 @@ class ProjectServiceImplTest {
 
     }
     @Test
-    public void deleteProject() throws RecordNotFoundException, ProjectCodeExistException {
+    public void deleteProject() throws Exception {
         //Arrange
         Mockito.when(projectRepository.findById(Mockito.anyInt())).thenReturn(Optional.of(save));
         //Act
@@ -50,7 +49,7 @@ class ProjectServiceImplTest {
         Mockito.verify(projectRepository).save(save);
     }
     @Test
-    public void deleteProjectByFindingId() throws RecordNotFoundException, ProjectCodeExistException {
+    public void deleteProjectByFindingId() throws Exception {
         //Arrange
         Mockito.when(projectRepository.findById(Mockito.anyInt())).thenReturn(Optional.of(save));
         //Act

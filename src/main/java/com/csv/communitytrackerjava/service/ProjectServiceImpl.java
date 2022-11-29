@@ -84,7 +84,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectResponseDTO deleteProject(int id) throws RecordNotFoundException, ProjectCodeExistException {
+    public ProjectResponseDTO deleteProject(int id) throws Exception {
         ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
         Project projectFound = projectRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Project to delete is not found."));
