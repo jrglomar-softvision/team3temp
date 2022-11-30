@@ -15,8 +15,6 @@ import java.util.Optional;
 public interface ProjectRepository extends PagingAndSortingRepository<Project, Integer> {
     Optional<Project> findByProjectCode(String projectCode);
 
-    Page<List<Project>> findByProjectId(Integer id, Pageable pageable);
+    List<Project> findByProjectId(Integer id);
     
-    Page<List<Project>> findByProjectDesc(String projectDesc, Pageable pageable);
-
 }

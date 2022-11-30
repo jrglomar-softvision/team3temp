@@ -1,9 +1,6 @@
 package com.csv.communitytrackerjava.service;
 
-import com.csv.communitytrackerjava.dto.ProjectAddDTO;
-import com.csv.communitytrackerjava.dto.ProjectPayloadDTO;
-import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
-import com.csv.communitytrackerjava.dto.ProjectUpdateDTO;
+import com.csv.communitytrackerjava.dto.*;
 import com.csv.communitytrackerjava.exception.ProjectCodeExistException;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.mapper.ProjectMapper;
@@ -18,19 +15,19 @@ import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
     @Autowired
     ProjectRepository projectRepository;
-    
-    @Autowired
-    PeopleRepository peopleRepository;
 
     @Autowired
     ProjectMapper projectMapper;
@@ -90,24 +87,20 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Page<List<Project>> findPeopleByProjectId(Pageable pageable, Integer id) throws Exception{
-        ProjectPayloadDTO projectPayloadDTO = new ProjectPayloadDTO();
-
-        Project projectFound = projectRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
-
-        projectPayloadDTO.setAdditionalProperty("project", projectFound);
-        
-        return projectRepository.findByProjectId(id, pageable);
-
-//        return toProjectResponseDTO("Successfully fetch all projects.", projectPayloadDTO);
+    public PageImpl<ProjectGetPeopleDTO> findPeopleByProjectId(Pageable pageable, Integer id) throws Exception{
+            List<ProjectGetPeopleDTO> projectList = (
+                    projectRepository.findByProjectId(id)
+                            .stream()
+                            .map(projects -> projectMapper.toGetPeopleDTO(projects))
+                            .collect(Collectors.toList()));
+            
+            if(projectList.isEmpty()){
+                throw new RecordNotFoundException("Project doesn't exist");
+            }
+            
+            return new PageImpl<>(projectList, pageable, projectList.size());
     }
 
-    @Override
-    public Page<List<Project>> findByProjectDesc(Pageable pageable, String projectDesc) throws Exception{
-
-        return projectRepository.findByProjectDesc(projectDesc, pageable);
-
-    }
 
     public ProjectResponseDTO toProjectResponseDTO(String message, ProjectPayloadDTO payloadDTO){
         ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();

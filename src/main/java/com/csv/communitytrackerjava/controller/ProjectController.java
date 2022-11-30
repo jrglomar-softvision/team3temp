@@ -1,6 +1,7 @@
 package com.csv.communitytrackerjava.controller;
 
 import com.csv.communitytrackerjava.dto.ProjectAddDTO;
+import com.csv.communitytrackerjava.dto.ProjectGetPeopleDTO;
 import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
 import com.csv.communitytrackerjava.dto.ProjectUpdateDTO;
 import com.csv.communitytrackerjava.exception.ProjectCodeExistException;
@@ -8,6 +9,7 @@ import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,13 +42,9 @@ public class ProjectController {
     }
     
     @GetMapping("/people/{projectId}")
-    public ResponseEntity<Page<List<Project>>> findByProjectId(Pageable pageable, @PathVariable Integer projectId) throws Exception{
+    public ResponseEntity<PageImpl<ProjectGetPeopleDTO>> findPeopleByProjectId(Pageable pageable, @PathVariable Integer projectId) throws Exception{
         return new ResponseEntity<>(projectService.findPeopleByProjectId(pageable, projectId), HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/projectDesc/{projectDesc}")
-    public ResponseEntity<Page<List<Project>>> findByProjectId(Pageable pageable, @PathVariable String projectDesc) throws Exception{
-        return new ResponseEntity<>(projectService.findByProjectDesc(pageable, projectDesc), HttpStatus.ACCEPTED);
-    }
 
 }

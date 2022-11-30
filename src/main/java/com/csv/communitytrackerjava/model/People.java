@@ -22,11 +22,8 @@ public class People {
     @Column(name="peopleid", updatable = false, nullable = false)
     private Integer peopleId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    @JoinColumn(name="projectid")
-    private Project project;
-    
+    @Column(name="projectid")
+    private Integer projectId;
     
     @Column(name="cognizantid")
     private Integer cognizantId;

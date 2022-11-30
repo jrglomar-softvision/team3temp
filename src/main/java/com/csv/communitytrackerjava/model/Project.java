@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -31,7 +32,7 @@ public class Project extends BaseAuditClass {
     @Column(name="isactive", nullable = false)
     private Boolean isActive;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project" ,fetch = FetchType.LAZY)
-    private List<People> people;
+    @OneToMany(mappedBy = "projectId", fetch = FetchType.LAZY)
+    private List<People> peoples;
 
 }
