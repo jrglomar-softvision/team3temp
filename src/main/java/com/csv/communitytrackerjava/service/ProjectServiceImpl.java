@@ -54,7 +54,7 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, int id) throws Exception {
         ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
 
-        Project projectFound = projectRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
+        Project projectFound = findProject(id);
         Optional<Project> projectCodeCheck = projectRepository.findByProjectCode(projectUpdateDTO.getProjectCode());
         String newDesc = projectUpdateDTO.getProjectDesc().isBlank() ? projectFound.getProjectDesc() : CaseUtils.toCamelCase(projectUpdateDTO.getProjectDesc(), true, ' ');
         projectUpdateDTO.setProjectDesc(newDesc);
@@ -63,7 +63,6 @@ public class ProjectServiceImpl implements ProjectService {
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
                 .setMatchingStrategy(MatchingStrategies.STANDARD)
                 .setSkipNullEnabled(true);
-        checkIfItsInactive(projectFound);
         if (projectCodeCheck.isPresent() && projectCodeCheck.get().getIsActive()) {
             throw new ProjectCodeExistException("Project code already exist.");
         }
@@ -84,9 +83,8 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectResponseDTO deleteProject(int id) throws Exception {
         ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
-        Project projectFound = projectRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException("Record not found"));
-        checkIfItsInactive(projectFound);
+
+        Project projectFound = findProject(id);
         modelMapper.getConfiguration().setSkipNullEnabled(true);
         projectFound.setIsActive(false);
         payloadDTO.setAdditionalProperty("projects", projectMapper.toDTO(projectRepository.save(projectFound)));
@@ -96,9 +94,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectResponseDTO findProjectById(int id) throws Exception {
         ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
-        Project projectFound = projectRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException("Record not found"));
-        checkIfItsInactive(projectFound);
+        Project projectFound = findProject(id);
         payloadDTO.setAdditionalProperty("projects", projectMapper.toDTO(projectFound));
         return toProjectResponseDTO("Successfully fetch", payloadDTO);
     }
@@ -110,9 +106,11 @@ public class ProjectServiceImpl implements ProjectService {
         return projectResponseDTO;
     }
 
-    public void checkIfItsInactive(Project project) throws Exception {
-        if (!project.getIsActive()) {
+    public Project findProject(int id) throws Exception {
+        Project projectFound = projectRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Record not found"));
+        if (!projectFound.getIsActive())
             throw new InactiveDataException("Project is already deleted.");
-        }
+        return projectFound;
     }
 }

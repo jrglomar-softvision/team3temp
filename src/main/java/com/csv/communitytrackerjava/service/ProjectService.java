@@ -11,7 +11,9 @@ public interface ProjectService {
     ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, int id) throws Exception;
 
     ProjectResponseDTO findAllProject();
+
     ProjectResponseDTO deleteProject(int id) throws Exception;
+
     ProjectResponseDTO findProjectById(int id) throws Exception;
 
 }
