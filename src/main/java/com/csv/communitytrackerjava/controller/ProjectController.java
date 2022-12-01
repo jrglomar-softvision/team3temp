@@ -34,5 +34,12 @@ public class ProjectController {
     public ResponseEntity<ProjectResponseDTO> update(@Valid @RequestBody ProjectUpdateDTO projectUpdateDTO, @PathVariable Integer id) throws Exception {
         return new ResponseEntity<>(projectService.updateProject(projectUpdateDTO, id), HttpStatus.ACCEPTED);
     }
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ProjectResponseDTO> delete(@Valid @PathVariable int id) throws Exception {
+        return new ResponseEntity<>(projectService.deleteProject(id), HttpStatus.ACCEPTED);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<ProjectResponseDTO> findById(@Valid @PathVariable int id) throws Exception {
+        return new ResponseEntity<>(projectService.findProjectById(id), HttpStatus.OK);
+    }
 }
