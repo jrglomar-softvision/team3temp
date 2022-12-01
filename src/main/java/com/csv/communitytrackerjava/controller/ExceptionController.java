@@ -23,8 +23,8 @@ public class ExceptionController {
     ExceptionService exceptionService;
 
 
-    @ExceptionHandler(value = {RecordNotFoundException.class, InactiveDataException.class, ProjectCodeExistException.class})
-    public ResponseEntity<ProjectResponseDTO> handleRecordNotFoundException(RecordNotFoundException e) {
+    @ExceptionHandler({RecordNotFoundException.class, ProjectCodeExistException.class, InactiveDataException.class})
+    public ResponseEntity<ProjectResponseDTO> handleRecordNotFoundException(Exception e) {
         return new ResponseEntity<>(exceptionService.formatBadRequest(e), HttpStatus.BAD_REQUEST);
     }
 

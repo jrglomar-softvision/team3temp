@@ -2,7 +2,7 @@ package com.csv.communitytrackerjava.controller;
 
 import com.csv.communitytrackerjava.dto.ProjectPayloadDTO;
 import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
-import com.csv.communitytrackerjava.exception.ProjectCodeExistException;
+import com.csv.communitytrackerjava.exception.InactiveDataException;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.service.ExceptionService;
@@ -82,15 +82,15 @@ class ProjectControllerTest {
     }
 
     @Test
-    public void deleteAlreadyDeleted() throws Exception {
+    public void deleteProjectThatWasAlreadyDeleted() throws Exception {
         //Arrange
         when(projectService.deleteProject(anyInt()))
-                .thenThrow(new ProjectCodeExistException("Project was already deleted."));
+                .thenThrow(new InactiveDataException("Project is already delete."));
         //Act
         mockMvc.perform(MockMvcRequestBuilders.delete("/projects/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(delete)))
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ProjectCodeExistException))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof InactiveDataException))
                 .andExpect(status().isBadRequest());
     }
 }

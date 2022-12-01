@@ -11,13 +11,13 @@ import com.csv.communitytrackerjava.mapper.ProjectMapper;
 import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.repository.ProjectRepository;
 import org.apache.commons.text.CaseUtils;
-
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -64,9 +64,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
                 .setMatchingStrategy(MatchingStrategies.STANDARD)
                 .setSkipNullEnabled(true);
-        if (!projectFound.getIsActive()) {
-            throw new InactiveDataException("Project was already deleted.");
-        }
+        checkIfItsInactive(projectFound);
         if (projectCodeCheck.isPresent() && projectCodeCheck.get().getIsActive()) {
             throw new ProjectCodeExistException("Project code already exist.");
         }
@@ -89,9 +87,7 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
         Project projectFound = projectRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Project to delete is not found."));
-        if (!projectFound.getIsActive()) {
-            throw new InactiveDataException("Project was already deleted.");
-        }
+        checkIfItsInactive(projectFound);
         modelMapper.getConfiguration().setSkipNullEnabled(true);
         projectFound.setIsActive(false);
         payloadDTO.setAdditionalProperty("projects", projectMapper.toDTO(projectRepository.save(projectFound)));
@@ -103,5 +99,10 @@ public class ProjectServiceImpl implements ProjectService {
         projectResponseDTO.setMessage(message);
         projectResponseDTO.setPayload(payloadDTO);
         return projectResponseDTO;
+    }
+    public void checkIfItsInactive(Project project) throws Exception {
+        if (!project.getIsActive()) {
+            throw new InactiveDataException("Project is already deleted.");
+        }
     }
 }

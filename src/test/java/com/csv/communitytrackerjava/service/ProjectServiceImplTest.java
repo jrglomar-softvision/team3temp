@@ -1,6 +1,6 @@
 package com.csv.communitytrackerjava.service;
 
-import com.csv.communitytrackerjava.exception.ProjectCodeExistException;
+import com.csv.communitytrackerjava.exception.InactiveDataException;
 import com.csv.communitytrackerjava.mapper.ProjectMapperImpl;
 import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.repository.ProjectRepository;
@@ -65,7 +65,7 @@ class ProjectServiceImplTest {
         //Act
 
         //Assert
-        assertThrows(ProjectCodeExistException.class, () -> projectServiceImpl.deleteProject(1));
+        assertThrows(InactiveDataException.class, () -> projectServiceImpl.deleteProject(1));
 
     }
 }
