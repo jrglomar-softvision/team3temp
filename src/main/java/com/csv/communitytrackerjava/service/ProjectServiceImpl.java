@@ -4,6 +4,7 @@ import com.csv.communitytrackerjava.dto.ProjectAddDTO;
 import com.csv.communitytrackerjava.dto.ProjectPayloadDTO;
 import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
 import com.csv.communitytrackerjava.dto.ProjectUpdateDTO;
+import com.csv.communitytrackerjava.exception.InactiveDataException;
 import com.csv.communitytrackerjava.exception.ProjectCodeExistException;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.mapper.ProjectMapper;
@@ -64,7 +65,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .setMatchingStrategy(MatchingStrategies.STANDARD)
                 .setSkipNullEnabled(true);
         if (!projectFound.getIsActive()) {
-            throw new ProjectCodeExistException("Project was already deleted.");
+            throw new InactiveDataException("Project was already deleted.");
         }
         if (projectCodeCheck.isPresent() && projectCodeCheck.get().getIsActive()) {
             throw new ProjectCodeExistException("Project code already exist.");
@@ -89,7 +90,7 @@ public class ProjectServiceImpl implements ProjectService {
         Project projectFound = projectRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Project to delete is not found."));
         if (!projectFound.getIsActive()) {
-            throw new ProjectCodeExistException("Project was already deleted.");
+            throw new InactiveDataException("Project was already deleted.");
         }
         modelMapper.getConfiguration().setSkipNullEnabled(true);
         projectFound.setIsActive(false);
@@ -103,6 +104,4 @@ public class ProjectServiceImpl implements ProjectService {
         projectResponseDTO.setPayload(payloadDTO);
         return projectResponseDTO;
     }
-
-
 }
