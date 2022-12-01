@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
-class ProjectControllerTest {
+class ProjectControllerDeleteTest {
     Project delete, save;
     @MockBean
     ProjectService projectService;

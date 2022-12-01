@@ -21,7 +21,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class ProjectServiceImplTest {
+class ProjectServiceDeleteTest {
     Project save,deleted;
     @Mock
     ProjectRepository projectRepository;

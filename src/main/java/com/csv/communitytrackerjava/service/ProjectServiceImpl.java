@@ -17,7 +17,6 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -86,12 +85,22 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectResponseDTO deleteProject(int id) throws Exception {
         ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
         Project projectFound = projectRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException("Project to delete is not found."));
+                .orElseThrow(() -> new RecordNotFoundException("Record not found"));
         checkIfItsInactive(projectFound);
         modelMapper.getConfiguration().setSkipNullEnabled(true);
         projectFound.setIsActive(false);
         payloadDTO.setAdditionalProperty("projects", projectMapper.toDTO(projectRepository.save(projectFound)));
         return toProjectResponseDTO("Successfully delete project.", payloadDTO);
+    }
+
+    @Override
+    public ProjectResponseDTO findProjectById(int id) throws Exception {
+        ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
+        Project projectFound = projectRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Record not found"));
+        checkIfItsInactive(projectFound);
+        payloadDTO.setAdditionalProperty("projects", projectMapper.toDTO(projectFound));
+        return toProjectResponseDTO("Successfully fetch", payloadDTO);
     }
 
     public ProjectResponseDTO toProjectResponseDTO(String message, ProjectPayloadDTO payloadDTO) {
@@ -100,6 +109,7 @@ public class ProjectServiceImpl implements ProjectService {
         projectResponseDTO.setPayload(payloadDTO);
         return projectResponseDTO;
     }
+
     public void checkIfItsInactive(Project project) throws Exception {
         if (!project.getIsActive()) {
             throw new InactiveDataException("Project is already deleted.");
