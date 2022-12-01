@@ -5,18 +5,15 @@ import com.csv.communitytrackerjava.dto.ProjectGetPeopleDTO;
 import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
 import com.csv.communitytrackerjava.dto.ProjectUpdateDTO;
 import com.csv.communitytrackerjava.exception.ProjectCodeExistException;
-import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -43,10 +40,9 @@ public class ProjectController {
     }
     
     @GetMapping("/people")
-    public ResponseEntity<Page<ProjectGetPeopleDTO>> findPeopleByProjectId(Pageable pageable, @RequestParam Set<Integer> projectId) throws Exception{
+    public ResponseEntity<Page<ProjectGetPeopleDTO>> findPeopleByProjectId(Pageable pageable, @RequestParam Set<Integer> projectId) throws Exception {
         return new ResponseEntity<>(projectService.findPeopleByProjectId(pageable, projectId), HttpStatus.ACCEPTED);
     }
-    
 
 
 }

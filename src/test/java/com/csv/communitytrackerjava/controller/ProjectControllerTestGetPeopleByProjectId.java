@@ -1,12 +1,8 @@
 package com.csv.communitytrackerjava.controller;
 
 import com.csv.communitytrackerjava.dto.ProjectGetPeopleDTO;
-import com.csv.communitytrackerjava.dto.ProjectPayloadDTO;
-import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
-import com.csv.communitytrackerjava.dto.ProjectUpdateDTO;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.model.People;
-import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.service.ExceptionService;
 import com.csv.communitytrackerjava.service.ProjectService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,18 +21,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
-import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
-class ProjectControllerTest {
+class ProjectControllerTestGetPeopleByProjectId {
     @MockBean
     private ProjectService projectService;
 
@@ -45,7 +38,7 @@ class ProjectControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -55,7 +48,7 @@ class ProjectControllerTest {
     Pageable pageable;
     List<ProjectGetPeopleDTO> projectList;
     PageImpl<ProjectGetPeopleDTO> pageProjectList;
-    
+
     @BeforeEach
     void setup() {
         peopleOne = new People(1, 1, 1, "John Raven", "Tamang", "Glomar", "Job Level Desc", "CSV", "TestProjectDesc1", true);
@@ -67,9 +60,9 @@ class ProjectControllerTest {
 
 
     @Test
-    void findPeopleByProjectId() throws Exception{
+    void findPeopleByProjectId() throws Exception {
         Mockito.when(projectService.findPeopleByProjectId(Mockito.any(), Mockito.any())).thenReturn(pageProjectList);
-        
+
         mockMvc.perform(get("/projects/people?projectId=1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(pageProjectList)))

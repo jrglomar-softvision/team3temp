@@ -4,13 +4,10 @@ import com.csv.communitytrackerjava.dto.*;
 import com.csv.communitytrackerjava.exception.ProjectCodeExistException;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.mapper.ProjectMapper;
-import com.csv.communitytrackerjava.model.People;
 import com.csv.communitytrackerjava.model.Project;
-import com.csv.communitytrackerjava.repository.PeopleRepository;
 import com.csv.communitytrackerjava.repository.ProjectRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.CaseUtils;
-
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
@@ -20,7 +17,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -33,15 +29,15 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     ProjectMapper projectMapper;
-    
+
     @Autowired
     ModelMapper modelMapper;
-   
+
 
     @Override
     public ProjectResponseDTO saveProject(ProjectAddDTO projectAddDTO) throws ProjectCodeExistException {
         ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
-        
+
         String projectCode = projectAddDTO.getProjectCode();
         Optional<Project> mapCode = projectRepository.findByProjectCode(projectCode);
         if (mapCode.isPresent()) {
@@ -53,14 +49,14 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectMapper.validationToModel(projectAddDTO);
         projectRepository.save(project);
         payloadDTO.setAdditionalProperty("project", projectMapper.toDTO(project));
-        
+
         return toProjectResponseDTO("Successfully add project.", payloadDTO);
     }
 
     @Override
     public ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, Integer id) throws Exception {
         ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
-        
+
         Project projectFound = projectRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
         Optional<Project> projectCodeCheck = projectRepository.findByProjectCode(projectUpdateDTO.getProjectCode());
         projectUpdateDTO.setProjectDesc(StringUtils.isBlank(projectUpdateDTO.getProjectDesc()) ? projectFound.getProjectDesc() : CaseUtils.toCamelCase(projectUpdateDTO.getProjectDesc(), true, ' '));
@@ -70,7 +66,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .setMatchingStrategy(MatchingStrategies.STANDARD)
                 .setSkipNullEnabled(true);
 
-        if(projectCodeCheck.isPresent()) {
+        if (projectCodeCheck.isPresent()) {
             throw new ProjectCodeExistException("Project code already exist.");
         }
 
@@ -88,24 +84,24 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Page<ProjectGetPeopleDTO> findPeopleByProjectId(Pageable pageable, Set<Integer> id) throws Exception{
+    public Page<ProjectGetPeopleDTO> findPeopleByProjectId(Pageable pageable, Set<Integer> id) throws Exception {
         List<ProjectGetPeopleDTO> projectList = (
                 projectRepository.findAllByProjectIdIn(id, pageable)
                         .stream()
                         .map(projects -> projectMapper.toGetPeopleDTO(projects))
                         .collect(Collectors.toList()));
 
-        if(projectList.isEmpty()){
+        if (projectList.isEmpty()) {
             throw new RecordNotFoundException("Project doesn't exist");
         }
         return new PageImpl<>(projectList);
     }
 
-    public ProjectResponseDTO toProjectResponseDTO(String message, ProjectPayloadDTO payloadDTO){
+    public ProjectResponseDTO toProjectResponseDTO(String message, ProjectPayloadDTO payloadDTO) {
         ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
         projectResponseDTO.setMessage(message);
         projectResponseDTO.setPayload(payloadDTO);
         return projectResponseDTO;
     }
-    
+
 }

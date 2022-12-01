@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.csv</groupId>
     <artifactId>community-tracker-java</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>community-tracker-java</name>
     <description>A spring boot application of community- tracker java</description>
     <properties>

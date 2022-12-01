@@ -116,14 +116,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/projects/people/100",
+							"raw": "{{base_url}}/projects/people/?projectId=100",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"projects",
 								"people",
-								"100"
+								""
+							],
+							"query": [
+								{
+									"key": "projectId",
+									"value": "100"
+								}
 							]
 						}
 					},

@@ -26,5 +26,5 @@ public class ProjectAddDTO {
 
     @NotNull
     private Boolean isActive;
-    
+
 }

@@ -1,7 +1,5 @@
 package com.csv.communitytrackerjava.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,34 +17,34 @@ public class People {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="peopleid", updatable = false, nullable = false)
+    @Column(name = "peopleid", updatable = false, nullable = false)
     private Integer peopleId;
 
-    @Column(name="projectid")
+    @Column(name = "projectid")
     private Integer projectId;
     
-    @Column(name="cognizantid")
+    @Column(name = "cognizantid")
     private Integer cognizantId;
 
     @Column(name = "firstname")
     private String firstName;
 
-    @Column(name="middlename")
+    @Column(name = "middlename")
     private String middleName;
-    
-    @Column(name="lastname")
+
+    @Column(name = "lastname")
     private String lastName;
 
-    @Column(name="jobleveldesc")
+    @Column(name = "jobleveldesc")
     private String jobLevelDesc;
-    
-    @Column(name="communityname")
+
+    @Column(name = "communityname")
     private String communityName;
-    
-    @Column(name="projectdesc")
+
+    @Column(name = "projectdesc")
     private String projectDesc;
 
-    @Column(name="isactive", nullable = false)
+    @Column(name = "isactive", nullable = false)
     private Boolean isActive;
 
 }

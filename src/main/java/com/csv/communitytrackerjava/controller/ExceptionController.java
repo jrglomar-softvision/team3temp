@@ -1,6 +1,5 @@
 package com.csv.communitytrackerjava.controller;
 
-import com.csv.communitytrackerjava.dto.ProjectPayloadDTO;
 import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
 import com.csv.communitytrackerjava.exception.ProjectCodeExistException;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
