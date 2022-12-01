@@ -19,5 +19,9 @@ public interface ProjectService {
     ProjectResponseDTO findAllProject();
 
     Page<ProjectGetPeopleDTO> findPeopleByProjectId(Pageable pageable, Set<Integer> id) throws Exception;
+    
+    ProjectResponseDTO deleteProject(int id) throws Exception;
+
+    ProjectResponseDTO findProjectById(int id) throws Exception;
 
 }

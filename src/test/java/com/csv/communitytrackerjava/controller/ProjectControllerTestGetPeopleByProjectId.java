@@ -92,9 +92,9 @@ class ProjectControllerTestGetPeopleByProjectId {
                         .param("projectId", "1,2")
                         .param("page", "1")
                         .param("size", "1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(pageProjectListTwo)))
                 .andExpect(jsonPath("$.size", CoreMatchers.is(1)))
-                .andExpect(jsonPath("$.totalPages", CoreMatchers.is(2)))
                 .andExpect(status().isAccepted());
     }
     

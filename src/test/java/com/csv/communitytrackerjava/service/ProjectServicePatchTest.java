@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 
 @ExtendWith(MockitoExtension.class)
-public class ProjectServiceTestPatch {
+public class ProjectServicePatchTest {
     @Mock
     ProjectRepository projectRepository;
     @InjectMocks

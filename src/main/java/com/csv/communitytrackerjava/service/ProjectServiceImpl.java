@@ -1,6 +1,11 @@
 package com.csv.communitytrackerjava.service;
 
 import com.csv.communitytrackerjava.dto.*;
+import com.csv.communitytrackerjava.dto.ProjectAddDTO;
+import com.csv.communitytrackerjava.dto.ProjectPayloadDTO;
+import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
+import com.csv.communitytrackerjava.dto.ProjectUpdateDTO;
+import com.csv.communitytrackerjava.exception.InactiveDataException;
 import com.csv.communitytrackerjava.exception.ProjectCodeExistException;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.mapper.ProjectMapper;
@@ -40,7 +45,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         String projectCode = projectAddDTO.getProjectCode();
         Optional<Project> mapCode = projectRepository.findByProjectCode(projectCode);
-        if (mapCode.isPresent()) {
+        if (mapCode.isPresent() && mapCode.get().getIsActive()) {
             throw new ProjectCodeExistException("Project code already exist.");
         }
         String projectDesc = projectAddDTO.getProjectDesc();
@@ -57,7 +62,7 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, Integer id) throws Exception {
         ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
 
-        Project projectFound = projectRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
+        Project projectFound = findProject(id);
         Optional<Project> projectCodeCheck = projectRepository.findByProjectCode(projectUpdateDTO.getProjectCode());
         projectUpdateDTO.setProjectDesc(StringUtils.isBlank(projectUpdateDTO.getProjectDesc()) ? projectFound.getProjectDesc() : CaseUtils.toCamelCase(projectUpdateDTO.getProjectDesc(), true, ' '));
 
@@ -65,8 +70,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
                 .setMatchingStrategy(MatchingStrategies.STANDARD)
                 .setSkipNullEnabled(true);
-
-        if (projectCodeCheck.isPresent()) {
+        if (projectCodeCheck.isPresent() && projectCodeCheck.get().getIsActive()) {
             throw new ProjectCodeExistException("Project code already exist.");
         }
 
@@ -89,12 +93,30 @@ public class ProjectServiceImpl implements ProjectService {
                 projectRepository.findAllByProjectIdIn(id, pageable)
                         .stream()
                         .map(projectMapper::toGetPeopleDTO))
-                        .collect(Collectors.toList());
+                .collect(Collectors.toList());
 
         if (projectList.isEmpty()) {
             throw new RecordNotFoundException("Project doesn't exist");
         }
         return new PageImpl<>(projectList, pageable, projectList.size());
+    }
+    
+    public ProjectResponseDTO deleteProject(int id) throws Exception {
+        ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
+
+        Project projectFound = findProject(id);
+        modelMapper.getConfiguration().setSkipNullEnabled(true);
+        projectFound.setIsActive(false);
+        payloadDTO.setAdditionalProperty("projects", projectMapper.toDTO(projectRepository.save(projectFound)));
+        return toProjectResponseDTO("Successfully delete project.", payloadDTO);
+    }
+
+    @Override
+    public ProjectResponseDTO findProjectById(int id) throws Exception {
+        ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
+        Project projectFound = findProject(id);
+        payloadDTO.setAdditionalProperty("projects", projectMapper.toDTO(projectFound));
+        return toProjectResponseDTO("Successfully fetch", payloadDTO);
     }
 
     public ProjectResponseDTO toProjectResponseDTO(String message, ProjectPayloadDTO payloadDTO) {
@@ -104,4 +126,11 @@ public class ProjectServiceImpl implements ProjectService {
         return projectResponseDTO;
     }
 
+    public Project findProject(int id) throws Exception {
+        Project projectFound = projectRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Record not found"));
+        if (!projectFound.getIsActive())
+            throw new InactiveDataException("Project is already deleted.");
+        return projectFound;
+    }
 }

@@ -1,6 +1,7 @@
 package com.csv.communitytrackerjava.controller;
 
 import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
+import com.csv.communitytrackerjava.exception.InactiveDataException;
 import com.csv.communitytrackerjava.exception.ProjectCodeExistException;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.service.ExceptionService;
@@ -21,13 +22,9 @@ public class ExceptionController {
     @Autowired
     ExceptionService exceptionService;
 
-    @ExceptionHandler(value = ProjectCodeExistException.class)
-    public ResponseEntity<ProjectResponseDTO> handleProjectCodeExistException(ProjectCodeExistException e) {
-        return new ResponseEntity<>(exceptionService.formatBadRequest(e), HttpStatus.BAD_REQUEST);
-    }
 
-    @ExceptionHandler(value = RecordNotFoundException.class)
-    public ResponseEntity<ProjectResponseDTO> handleRecordNotFoundException(RecordNotFoundException e) {
+    @ExceptionHandler({RecordNotFoundException.class, ProjectCodeExistException.class, InactiveDataException.class})
+    public ResponseEntity<ProjectResponseDTO> handleRecordNotFoundException(Exception e) {
         return new ResponseEntity<>(exceptionService.formatBadRequest(e), HttpStatus.BAD_REQUEST);
     }
 
