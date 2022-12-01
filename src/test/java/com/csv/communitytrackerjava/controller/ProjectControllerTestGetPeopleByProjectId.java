@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -46,32 +47,57 @@ class ProjectControllerTestGetPeopleByProjectId {
     People peopleOne;
     ProjectGetPeopleDTO projectGetPeopleDTO;
     Pageable pageable;
+    Pageable pageableTwo;
     List<ProjectGetPeopleDTO> projectList;
-    PageImpl<ProjectGetPeopleDTO> pageProjectList;
+    Page<ProjectGetPeopleDTO> pageProjectList;
+    
+    Page<ProjectGetPeopleDTO> pageProjectListTwo;
+    
+    People peopleTwo;
+    ProjectGetPeopleDTO projectGetPeopleDTOTwo;
 
     @BeforeEach
     void setup() {
         peopleOne = new People(1, 1, 1, "John Raven", "Tamang", "Glomar", "Job Level Desc", "CSV", "TestProjectDesc1", true);
+        peopleTwo = new People(2, 2, 1, "John Raven", "Tamang", "Glomar", "Job Level Desc", "CSV", "TestProjectDesc1", true);
         projectGetPeopleDTO = new ProjectGetPeopleDTO(1, "TestProjectDesc1", "TPC1", true, List.of(peopleOne));
+        projectGetPeopleDTOTwo = new ProjectGetPeopleDTO(2, "TestProjectDesc2", "TPC2", true, List.of(peopleTwo));
         pageable = PageRequest.of(0, 1);
-        projectList = List.of(projectGetPeopleDTO);
+        pageableTwo = PageRequest.of(1, 1);
+        projectList = List.of(projectGetPeopleDTO, projectGetPeopleDTOTwo);
         pageProjectList = new PageImpl<>(projectList, pageable, projectList.size());
+        pageProjectListTwo = new PageImpl<>(projectList, pageableTwo, projectList.size());
     }
 
 
     @Test
+    @DisplayName("Find people by project id with pagination test")
     void findPeopleByProjectId() throws Exception {
         Mockito.when(projectService.findPeopleByProjectId(Mockito.any(), Mockito.any())).thenReturn(pageProjectList);
 
         mockMvc.perform(get("/projects/people?projectId=1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(pageProjectList)))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size", CoreMatchers.is(pageProjectList.getSize())))
                 .andExpect(jsonPath("$.content[0].projectId", CoreMatchers.is(pageProjectList.getContent().get(0).getProjectId())))
                 .andExpect(jsonPath("$.content[0].peoples[0].projectId", CoreMatchers.is(pageProjectList.getContent().get(0).getPeoples().get(0).getProjectId())))
                 .andExpect(status().isAccepted());
     }
 
+    @Test
+    @DisplayName("Find people by project id page 2")
+    void findPeopleByProjectIdPage2() throws Exception {
+        Mockito.when(projectService.findPeopleByProjectId(Mockito.any(), Mockito.any())).thenReturn(pageProjectListTwo);
+
+        mockMvc.perform(get("/projects/people")
+                        .param("projectId", "1,2")
+                        .param("page", "1")
+                        .param("size", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.size", CoreMatchers.is(1)))
+                .andExpect(jsonPath("$.totalPages", CoreMatchers.is(2)))
+                .andExpect(status().isAccepted());
+    }
+    
     @Test
     @DisplayName("Find people by project id with pagination test")
     void findPeopleByProjectIdRecordNotFound() throws Exception {
@@ -81,8 +107,7 @@ class ProjectControllerTestGetPeopleByProjectId {
                 .thenThrow(new RecordNotFoundException("Project doesn't exist."));
 
         mockMvc.perform(get("/projects/people?projectId=100")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(pageProjectList)))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof RecordNotFoundException))
                 .andExpect(result -> assertEquals("Project doesn't exist.", result.getResolvedException().getMessage()))
                 .andExpect(status().isBadRequest());

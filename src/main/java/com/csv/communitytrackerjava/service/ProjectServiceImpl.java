@@ -88,13 +88,13 @@ public class ProjectServiceImpl implements ProjectService {
         List<ProjectGetPeopleDTO> projectList = (
                 projectRepository.findAllByProjectIdIn(id, pageable)
                         .stream()
-                        .map(projects -> projectMapper.toGetPeopleDTO(projects))
-                        .collect(Collectors.toList()));
+                        .map(projectMapper::toGetPeopleDTO))
+                        .collect(Collectors.toList());
 
         if (projectList.isEmpty()) {
             throw new RecordNotFoundException("Project doesn't exist");
         }
-        return new PageImpl<>(projectList);
+        return new PageImpl<>(projectList, pageable, projectList.size());
     }
 
     public ProjectResponseDTO toProjectResponseDTO(String message, ProjectPayloadDTO payloadDTO) {
