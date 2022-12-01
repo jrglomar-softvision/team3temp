@@ -1,5 +1,6 @@
 package com.csv.communitytrackerjava.service;
 
+import com.csv.communitytrackerjava.dto.*;
 import com.csv.communitytrackerjava.dto.ProjectAddDTO;
 import com.csv.communitytrackerjava.dto.ProjectPayloadDTO;
 import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
@@ -10,14 +11,21 @@ import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.mapper.ProjectMapper;
 import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.repository.ProjectRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.CaseUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -51,13 +59,12 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, int id) throws Exception {
+    public ProjectResponseDTO updateProject(ProjectUpdateDTO projectUpdateDTO, Integer id) throws Exception {
         ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
 
         Project projectFound = findProject(id);
         Optional<Project> projectCodeCheck = projectRepository.findByProjectCode(projectUpdateDTO.getProjectCode());
-        String newDesc = projectUpdateDTO.getProjectDesc().isBlank() ? projectFound.getProjectDesc() : CaseUtils.toCamelCase(projectUpdateDTO.getProjectDesc(), true, ' ');
-        projectUpdateDTO.setProjectDesc(newDesc);
+        projectUpdateDTO.setProjectDesc(StringUtils.isBlank(projectUpdateDTO.getProjectDesc()) ? projectFound.getProjectDesc() : CaseUtils.toCamelCase(projectUpdateDTO.getProjectDesc(), true, ' '));
 
         modelMapper.getConfiguration()
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
@@ -76,11 +83,24 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectResponseDTO findAllProject() {
         ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
-        payloadDTO.setAdditionalProperty("projects", projectMapper.toListDTO(projectRepository.findAll()));
+        payloadDTO.setAdditionalProperty("projects", projectRepository.findAll());
         return toProjectResponseDTO("Successfully fetch all projects.", payloadDTO);
     }
 
     @Override
+    public Page<ProjectGetPeopleDTO> findPeopleByProjectId(Pageable pageable, Set<Integer> id) throws Exception {
+        List<ProjectGetPeopleDTO> projectList = (
+                projectRepository.findAllByProjectIdIn(id, pageable)
+                        .stream()
+                        .map(projectMapper::toGetPeopleDTO))
+                .collect(Collectors.toList());
+
+        if (projectList.isEmpty()) {
+            throw new RecordNotFoundException("Project doesn't exist");
+        }
+        return new PageImpl<>(projectList, pageable, projectList.size());
+    }
+    
     public ProjectResponseDTO deleteProject(int id) throws Exception {
         ProjectPayloadDTO payloadDTO = new ProjectPayloadDTO();
 
