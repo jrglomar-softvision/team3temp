@@ -10,10 +10,10 @@ VALUES
 INSERT INTO public.people
 (cognizantid, projectid, communityname, firstname, middlename, lastname, isactive, jobleveldesc, projectdesc)
 VALUES
-(1, 1, 'CSV', 'John Raven', 'Tamang', 'Glomar', true, 'Level Desc Test', 'Community Helper Spring Boot');
+(1, 1, 'CSV', 'John Raven', 'Tamang', 'Glomar', true, 'Level Desc Test', 'CommunityHelperSpringBoot');
 INSERT INTO public.people
 (cognizantid, projectid, communityname, firstname, middlename, lastname, isactive, jobleveldesc, projectdesc)
 VALUES
-(2, 1, 'CSV', 'Cris John', '', 'Baquiran', true, 'Level Desc Test', 'Community Helper Spring Boot');
+(2, 1, 'CSV', 'Cris John', '', 'Baquiran', true, 'Level Desc Test', 'CommunityHelperSpringBoot');
 
 

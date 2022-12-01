@@ -8,6 +8,7 @@ import com.csv.communitytrackerjava.model.People;
 import com.csv.communitytrackerjava.model.Project;
 import com.csv.communitytrackerjava.repository.PeopleRepository;
 import com.csv.communitytrackerjava.repository.ProjectRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.CaseUtils;
 
 import org.modelmapper.ModelMapper;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,8 +63,7 @@ public class ProjectServiceImpl implements ProjectService {
         
         Project projectFound = projectRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Record not found."));
         Optional<Project> projectCodeCheck = projectRepository.findByProjectCode(projectUpdateDTO.getProjectCode());
-        String newDesc = projectUpdateDTO.getProjectDesc().isBlank() ? projectFound.getProjectDesc() : CaseUtils.toCamelCase(projectUpdateDTO.getProjectDesc(), true, ' ');
-        projectUpdateDTO.setProjectDesc(newDesc);
+        projectUpdateDTO.setProjectDesc(StringUtils.isBlank(projectUpdateDTO.getProjectDesc()) ? projectFound.getProjectDesc() : CaseUtils.toCamelCase(projectUpdateDTO.getProjectDesc(), true, ' '));
 
         modelMapper.getConfiguration()
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE)
@@ -87,20 +88,18 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public PageImpl<ProjectGetPeopleDTO> findPeopleByProjectId(Pageable pageable, Integer id) throws Exception{
-            List<ProjectGetPeopleDTO> projectList = (
-                    projectRepository.findByProjectId(id)
-                            .stream()
-                            .map(projects -> projectMapper.toGetPeopleDTO(projects))
-                            .collect(Collectors.toList()));
-            
-            if(projectList.isEmpty()){
-                throw new RecordNotFoundException("Project doesn't exist");
-            }
-            
-            return new PageImpl<>(projectList, pageable, projectList.size());
-    }
+    public Page<ProjectGetPeopleDTO> findPeopleByProjectId(Pageable pageable, Set<Integer> id) throws Exception{
+        List<ProjectGetPeopleDTO> projectList = (
+                projectRepository.findAllByProjectIdIn(id, pageable)
+                        .stream()
+                        .map(projects -> projectMapper.toGetPeopleDTO(projects))
+                        .collect(Collectors.toList()));
 
+        if(projectList.isEmpty()){
+            throw new RecordNotFoundException("Project doesn't exist");
+        }
+        return new PageImpl<>(projectList);
+    }
 
     public ProjectResponseDTO toProjectResponseDTO(String message, ProjectPayloadDTO payloadDTO){
         ProjectResponseDTO projectResponseDTO = new ProjectResponseDTO();
@@ -108,6 +107,5 @@ public class ProjectServiceImpl implements ProjectService {
         projectResponseDTO.setPayload(payloadDTO);
         return projectResponseDTO;
     }
-
-
+    
 }

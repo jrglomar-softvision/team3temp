@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/projects")
@@ -41,10 +42,11 @@ public class ProjectController {
         return new ResponseEntity<>(projectService.updateProject(projectUpdateDTO, id), HttpStatus.ACCEPTED);
     }
     
-    @GetMapping("/people/{projectId}")
-    public ResponseEntity<PageImpl<ProjectGetPeopleDTO>> findPeopleByProjectId(Pageable pageable, @PathVariable Integer projectId) throws Exception{
+    @GetMapping("/people")
+    public ResponseEntity<Page<ProjectGetPeopleDTO>> findPeopleByProjectId(Pageable pageable, @RequestParam Set<Integer> projectId) throws Exception{
         return new ResponseEntity<>(projectService.findPeopleByProjectId(pageable, projectId), HttpStatus.ACCEPTED);
     }
+    
 
 
 }

@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Set;
 
 
 public interface ProjectService {
@@ -21,6 +22,6 @@ public interface ProjectService {
 
     ProjectResponseDTO findAllProject();
 
-    PageImpl<ProjectGetPeopleDTO> findPeopleByProjectId(Pageable pageable, Integer id) throws Exception;
+    Page<ProjectGetPeopleDTO> findPeopleByProjectId(Pageable pageable, Set<Integer> id) throws Exception;
     
 }

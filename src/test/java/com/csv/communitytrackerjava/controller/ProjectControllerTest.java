@@ -12,6 +12,7 @@ import com.csv.communitytrackerjava.service.ProjectService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,26 +68,26 @@ class ProjectControllerTest {
 
     @Test
     void findPeopleByProjectId() throws Exception{
-        Mockito.when(projectService.findPeopleByProjectId(Mockito.any(), Mockito.anyInt())).thenReturn(pageProjectList);
+        Mockito.when(projectService.findPeopleByProjectId(Mockito.any(), Mockito.any())).thenReturn(pageProjectList);
         
-        mockMvc.perform(get("/projects/people/{projectId}", 1)
+        mockMvc.perform(get("/projects/people?projectId=1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(pageProjectList)))
                 .andExpect(jsonPath("$.size", CoreMatchers.is(pageProjectList.getSize())))
-                .andExpect(jsonPath("$.totalPages", CoreMatchers.is(pageProjectList.getTotalPages())))
                 .andExpect(jsonPath("$.content[0].projectId", CoreMatchers.is(pageProjectList.getContent().get(0).getProjectId())))
                 .andExpect(jsonPath("$.content[0].peoples[0].projectId", CoreMatchers.is(pageProjectList.getContent().get(0).getPeoples().get(0).getProjectId())))
                 .andExpect(status().isAccepted());
     }
 
     @Test
-    void updateProjectRecordNotFound() throws Exception {
+    @DisplayName("Find people by project id with pagination test")
+    void findPeopleByProjectIdRecordNotFound() throws Exception {
 
 
-        Mockito.when(projectService.findPeopleByProjectId(Mockito.any(), Mockito.anyInt()))
+        Mockito.when(projectService.findPeopleByProjectId(Mockito.any(), Mockito.any()))
                 .thenThrow(new RecordNotFoundException("Project doesn't exist."));
 
-        mockMvc.perform(get("/projects/people/{projectId}", 100)
+        mockMvc.perform(get("/projects/people?projectId=100")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(pageProjectList)))
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof RecordNotFoundException))
