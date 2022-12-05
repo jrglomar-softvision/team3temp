@@ -67,7 +67,7 @@ class ProjectServiceImplTestGetPeopleByProjectId {
 
         Mockito.when(projectRepository.findAllByProjectIdIn(Mockito.any(), Mockito.any())).thenReturn(projectList);
 
-        Page<ProjectGetPeopleDTO> result = projectService.findPeopleByProjectId(pageable, idList);
+        Page<ProjectGetPeopleDTO> result = projectService.findPeopleByProjectId(pageable, idList, "inactive");
 
         Mockito.verify(projectRepository).findAllByProjectIdIn(Mockito.any(), Mockito.any());
         assertEquals(2, result.getContent().size());
@@ -80,7 +80,7 @@ class ProjectServiceImplTestGetPeopleByProjectId {
     void findPeopleByProjectIdPage2() throws Exception {
         Mockito.when(projectRepository.findAllByProjectIdIn(Mockito.any(), Mockito.any())).thenReturn(projectList);
 
-        Page<ProjectGetPeopleDTO> result = projectService.findPeopleByProjectId(pageableTwo, idList);
+        Page<ProjectGetPeopleDTO> result = projectService.findPeopleByProjectId(pageableTwo, idList, "inactive");
 
         Mockito.verify(projectRepository).findAllByProjectIdIn(Mockito.any(), Mockito.any());
         assertEquals(1, result.getPageable().getPageSize());
@@ -91,7 +91,7 @@ class ProjectServiceImplTestGetPeopleByProjectId {
     @DisplayName("Find people by project id with record not found test")
     void findPeoplByProjectId() throws Exception {
 
-        Throwable exception = assertThrows(RecordNotFoundException.class, () -> projectService.findPeopleByProjectId(pageable, idList));
+        Throwable exception = assertThrows(RecordNotFoundException.class, () -> projectService.findPeopleByProjectId(pageable, idList, "inactive"));
 
         Mockito.verify(projectRepository).findAllByProjectIdIn(Mockito.any(), Mockito.any());
         assertEquals("Project doesn't exist", exception.getMessage());
