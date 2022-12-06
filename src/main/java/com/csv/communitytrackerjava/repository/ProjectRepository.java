@@ -14,5 +14,5 @@ public interface ProjectRepository extends PagingAndSortingRepository<Project, I
     Optional<Project> findByProjectCode(String projectCode);
 
     List<Project> findAllByProjectIdIn(Set<Integer> id, Pageable pageable);
-
+    
 }

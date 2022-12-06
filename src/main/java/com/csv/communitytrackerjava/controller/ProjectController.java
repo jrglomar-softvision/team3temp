@@ -52,4 +52,5 @@ public class ProjectController {
     public ResponseEntity<ProjectResponseDTO> findById(@Valid @PathVariable int id) throws Exception {
         return new ResponseEntity<>(projectService.findProjectById(id), HttpStatus.OK);
     }
+    
 }

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.Objects;
 
@@ -26,6 +27,11 @@ public class ExceptionController {
     @ExceptionHandler({RecordNotFoundException.class, ProjectCodeExistException.class, InactiveDataException.class})
     public ResponseEntity<ProjectResponseDTO> handleRecordNotFoundException(Exception e) {
         return new ResponseEntity<>(exceptionService.formatBadRequest(e), HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ProjectResponseDTO> handleMethodArgumentTypeMismatchException(Exception e){
+        return new ResponseEntity<>(exceptionService.formatBadRequest(e, "Invalid input type."), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
