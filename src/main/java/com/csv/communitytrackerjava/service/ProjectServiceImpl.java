@@ -6,6 +6,7 @@ import com.csv.communitytrackerjava.dto.ProjectPayloadDTO;
 import com.csv.communitytrackerjava.dto.ProjectResponseDTO;
 import com.csv.communitytrackerjava.dto.ProjectUpdateDTO;
 import com.csv.communitytrackerjava.exception.InactiveDataException;
+import com.csv.communitytrackerjava.exception.InvalidInputException;
 import com.csv.communitytrackerjava.exception.ProjectCodeExistException;
 import com.csv.communitytrackerjava.exception.RecordNotFoundException;
 import com.csv.communitytrackerjava.mapper.ProjectMapper;
@@ -21,6 +22,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 import java.util.Optional;
@@ -88,9 +91,21 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Page<ProjectGetPeopleDTO> findPeopleByProjectId(Pageable pageable, Set<Integer> id) throws Exception {
+    public Page<ProjectGetPeopleDTO> findPeopleByProjectId(Pageable pageable, Set<Integer> id, String include) throws Exception {
+        List<Project> projects;
+        
+        if(StringUtils.isBlank(include)){
+            projects = projectRepository.findAllByProjectIdInAndIsActiveTrue(id, pageable);
+        }
+        else {
+            if(include.equals("inactive"))
+                projects = projectRepository.findAllByProjectIdIn(id, pageable);
+            else
+                throw new InvalidInputException("Invalid include input.");
+        }
+        
         List<ProjectGetPeopleDTO> projectList = (
-                projectRepository.findAllByProjectIdIn(id, pageable)
+                projects
                         .stream()
                         .map(projectMapper::toGetPeopleDTO))
                 .collect(Collectors.toList());

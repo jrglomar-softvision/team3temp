@@ -73,7 +73,7 @@ class ProjectControllerTestGetPeopleByProjectId {
     @Test
     @DisplayName("Find people by project id with pagination test")
     void findPeopleByProjectId() throws Exception {
-        Mockito.when(projectService.findPeopleByProjectId(Mockito.any(), Mockito.any())).thenReturn(pageProjectList);
+        Mockito.when(projectService.findPeopleByProjectId(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(pageProjectList);
 
         mockMvc.perform(get("/projects/people?projectId=1")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -86,7 +86,7 @@ class ProjectControllerTestGetPeopleByProjectId {
     @Test
     @DisplayName("Find people by project id page 2")
     void findPeopleByProjectIdPage2() throws Exception {
-        Mockito.when(projectService.findPeopleByProjectId(Mockito.any(), Mockito.any())).thenReturn(pageProjectListTwo);
+        Mockito.when(projectService.findPeopleByProjectId(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(pageProjectListTwo);
 
         mockMvc.perform(get("/projects/people")
                         .param("projectId", "1,2")
@@ -103,7 +103,7 @@ class ProjectControllerTestGetPeopleByProjectId {
     void findPeopleByProjectIdRecordNotFound() throws Exception {
 
 
-        Mockito.when(projectService.findPeopleByProjectId(Mockito.any(), Mockito.any()))
+        Mockito.when(projectService.findPeopleByProjectId(Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenThrow(new RecordNotFoundException("Project doesn't exist."));
 
         mockMvc.perform(get("/projects/people?projectId=100")
